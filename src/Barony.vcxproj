@@ -1,0 +1,223 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A4A170FF-C081-4F33-94FE-5C60E89C5990}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>barony</RootNamespace>
+    <ProjectName>barony</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <!-- Defined Locations -->
+  <PropertyGroup Label="Globals">
+    <BARONY_ROOT>$(UserRootDir)</BARONY_ROOT>
+    <GAMELIBS_ROOT>E:\GameLibs</GAMELIBS_ROOT>
+    <FMOD_API_ROOT>C:\Program Files (x86)\FMOD SoundSystem\FMOD Programmers API Windows\api</FMOD_API_ROOT>
+    <PHYSFS_ROOT>P:\Ben\Documents\Visual Studio 2015\Projects\libphysfs</PHYSFS_ROOT>
+  </PropertyGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Program Files (x86)\FMOD SoundSystem\FMOD Programmers API Windows\api\inc;$(GAMELIBS_ROOT)\SDL2-2.0.4\include;$(GAMELIBS_ROOT)\SDL2_image-2.0.0\include;$(GAMELIBS_ROOT)\SDL2_net-2.0.0\include;$(GAMELIBS_ROOT)\libpng-1.2.37-lib\include;$(GAMELIBS_ROOT)\zlib-1.2.3-lib\include;$(GAMELIBS_ROOT)\steamworks_sdk_135\sdk\public;$(GAMELIBS_ROOT)\SDL2_ttf-2.0.14\include</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);C:\Program Files (x86)\FMOD SoundSystem\FMOD Programmers API Windows\api\lib;$(GAMELIBS_ROOT)\SDL2-2.0.4\lib\x86;$(GAMELIBS_ROOT)\SDL2_image-2.0.0\lib\x86;$(GAMELIBS_ROOT)\SDL2_net-2.0.0\lib\x86;$(GAMELIBS_ROOT)\libpng-1.2.37-lib\lib;$(GAMELIBS_ROOT)\zlib-1.2.3-lib\lib;$(GAMELIBS_ROOT)\steamworks_sdk_135\sdk\redistributable_bin;$(GAMELIBS_ROOT)\SDL2_ttf-2.0.14\lib\x86</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Program Files (x86)\FMOD SoundSystem\FMOD Programmers API Windows\api\inc;$(GAMELIBS_ROOT)\SDL2-2.0.4\include;$(GAMELIBS_ROOT)\SDL2_image-2.0.0\include;$(GAMELIBS_ROOT)\SDL2_net-2.0.0\include;$(GAMELIBS_ROOT)\libpng-1.2.37-lib\include;$(GAMELIBS_ROOT)\zlib-1.2.3-lib\include;$(GAMELIBS_ROOT)\steamworks_sdk_135\sdk\public;$(GAMELIBS_ROOT)\SDL2_ttf-2.0.14\include</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);C:\Program Files (x86)\FMOD SoundSystem\FMOD Programmers API Windows\api\lib;$(GAMELIBS_ROOT)\SDL2-2.0.4\lib\x86;$(GAMELIBS_ROOT)\SDL2_image-2.0.0\lib\x86;$(GAMELIBS_ROOT)\SDL2_net-2.0.0\lib\x86;$(GAMELIBS_ROOT)\libpng-1.2.37-lib\lib;$(GAMELIBS_ROOT)\zlib-1.2.3-lib\lib;$(GAMELIBS_ROOT)\steamworks_sdk_135\sdk\redistributable_bin;$(GAMELIBS_ROOT)\SDL2_ttf-2.0.14\lib\x86</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>OpenGL32.lib;glu32.lib;SDL2.lib;SDL2main.lib;SDL2_net.lib;SDL2_image.lib;fmodex_vc.lib;libpng.lib;zlib.lib;steam_api.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>OpenGL32.lib;glu32.lib;SDL2.lib;SDL2main.lib;SDL2_net.lib;SDL2_image.lib;fmodex_vc.lib;libpng.lib;zlib.lib;steam_api.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="actarrow.cpp" />
+    <ClCompile Include="actarrowtrap.cpp" />
+    <ClCompile Include="actbeartrap.cpp" />
+    <ClCompile Include="actboulder.cpp" />
+    <ClCompile Include="actcampfire.cpp" />
+    <ClCompile Include="actchest.cpp" />
+    <ClCompile Include="actdoor.cpp" />
+    <ClCompile Include="actflame.cpp" />
+    <ClCompile Include="actfountain.cpp" />
+    <ClCompile Include="actgate.cpp" />
+    <ClCompile Include="actgeneral.cpp" />
+    <ClCompile Include="actgib.cpp" />
+    <ClCompile Include="actgold.cpp" />
+    <ClCompile Include="actheadstone.cpp" />
+    <ClCompile Include="acthudweapon.cpp" />
+    <ClCompile Include="actitem.cpp" />
+    <ClCompile Include="actladder.cpp" />
+    <ClCompile Include="actmonster.cpp" />
+    <ClCompile Include="actplayer.cpp" />
+    <ClCompile Include="actsink.cpp" />
+    <ClCompile Include="actspeartrap.cpp" />
+    <ClCompile Include="actsprite.cpp" />
+    <ClCompile Include="actthrown.cpp" />
+    <ClCompile Include="acttorch.cpp" />
+    <ClCompile Include="actwallbuster.cpp" />
+    <ClCompile Include="book.cpp" />
+    <ClCompile Include="charclass.cpp" />
+    <ClCompile Include="collision.cpp" />
+    <ClCompile Include="draw.cpp" />
+    <ClCompile Include="entity.cpp" />
+    <ClCompile Include="files.cpp" />
+    <ClCompile Include="game.cpp" />
+    <ClCompile Include="hash.cpp" />
+    <ClCompile Include="init.cpp" />
+    <ClCompile Include="init_game.cpp" />
+    <ClCompile Include="interface\bookgui.cpp" />
+    <ClCompile Include="interface\clickdescription.cpp" />
+    <ClCompile Include="interface\consolecommand.cpp" />
+    <ClCompile Include="interface\drawminimap.cpp" />
+    <ClCompile Include="interface\drawstatus.cpp" />
+    <ClCompile Include="interface\identify_and_appraise.cpp" />
+    <ClCompile Include="interface\interface.cpp" />
+    <ClCompile Include="interface\magicgui.cpp" />
+    <ClCompile Include="interface\playerinventory.cpp" />
+    <ClCompile Include="interface\removecurse.cpp" />
+    <ClCompile Include="interface\screenshot.cpp" />
+    <ClCompile Include="interface\shopgui.cpp" />
+    <ClCompile Include="interface\updatecharactersheet.cpp" />
+    <ClCompile Include="interface\updatechestinventory.cpp" />
+    <ClCompile Include="interface\updaterightsidebar.cpp" />
+    <ClCompile Include="items.cpp" />
+    <ClCompile Include="item_usage_funcs.cpp" />
+    <ClCompile Include="light.cpp" />
+    <ClCompile Include="list.cpp" />
+    <ClCompile Include="magic\actmagic.cpp" />
+    <ClCompile Include="magic\act_HandMagic.cpp" />
+    <ClCompile Include="magic\castSpell.cpp" />
+    <ClCompile Include="magic\magic.cpp" />
+    <ClCompile Include="magic\setupSpells.cpp" />
+    <ClCompile Include="magic\spell.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="maps.cpp" />
+    <ClCompile Include="mechanisms.cpp" />
+    <ClCompile Include="menu.cpp" />
+    <ClCompile Include="messages.cpp" />
+    <ClCompile Include="monster_demon.cpp" />
+    <ClCompile Include="monster_devil.cpp" />
+    <ClCompile Include="monster_ghoul.cpp" />
+    <ClCompile Include="monster_gnome.cpp" />
+    <ClCompile Include="monster_goblin.cpp" />
+    <ClCompile Include="monster_human.cpp" />
+    <ClCompile Include="monster_imp.cpp" />
+    <ClCompile Include="monster_lich.cpp" />
+    <ClCompile Include="monster_minotaur.cpp" />
+    <ClCompile Include="monster_rat.cpp" />
+    <ClCompile Include="monster_scorpion.cpp" />
+    <ClCompile Include="monster_shopkeeper.cpp" />
+    <ClCompile Include="monster_skeleton.cpp" />
+    <ClCompile Include="monster_slime.cpp" />
+    <ClCompile Include="monster_spider.cpp" />
+    <ClCompile Include="monster_succubus.cpp" />
+    <ClCompile Include="monster_troll.cpp" />
+    <ClCompile Include="net.cpp" />
+    <ClCompile Include="objects.cpp" />
+    <ClCompile Include="opengl.cpp" />
+    <ClCompile Include="paths.cpp" />
+    <ClCompile Include="prng.cpp" />
+    <ClCompile Include="savepng.cpp" />
+    <ClCompile Include="scores.cpp" />
+    <ClCompile Include="shops.cpp" />
+    <ClCompile Include="sound.cpp" />
+    <ClCompile Include="sound_game.cpp" />
+    <ClCompile Include="stat.cpp" />
+    <ClCompile Include="steam.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="book.hpp" />
+    <ClInclude Include="classdescriptions.hpp" />
+    <ClInclude Include="collision.hpp" />
+    <ClInclude Include="credits.hpp" />
+    <ClInclude Include="entity.hpp" />
+    <ClInclude Include="game.hpp" />
+    <ClInclude Include="hash.hpp" />
+    <ClInclude Include="interface\interface.hpp" />
+    <ClInclude Include="items.hpp" />
+    <ClInclude Include="magic\magic.hpp" />
+    <ClInclude Include="main.hpp" />
+    <ClInclude Include="menu.hpp" />
+    <ClInclude Include="messages.hpp" />
+    <ClInclude Include="monster.hpp" />
+    <ClInclude Include="net.hpp" />
+    <ClInclude Include="paths.hpp" />
+    <ClInclude Include="prng.hpp" />
+    <ClInclude Include="savepng.hpp" />
+    <ClInclude Include="scores.hpp" />
+    <ClInclude Include="scrolls.hpp" />
+    <ClInclude Include="shops.hpp" />
+    <ClInclude Include="sound.hpp" />
+    <ClInclude Include="stat.hpp" />
+    <ClInclude Include="steam.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="game.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="wingameicon.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
