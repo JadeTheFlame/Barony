@@ -1,0 +1,27 @@
+[submodule "Externals/SDL2/SDL"]
+	path = Externals/SDL2/SDL
+	url = https://github.com/libsdl-org/SDL.git
+[submodule "Externals/SDL2/SDL_image"]
+	path = Externals/SDL2/SDL_image
+	url = https://github.com/libsdl-org/SDL_image.git
+[submodule "Externals/SDL2/SDL_net"]
+	path = Externals/SDL2/SDL_net
+	url = https://github.com/libsdl-org/SDL_net.git
+[submodule "Externals/SDL2/SDL_ttf"]
+	path = Externals/SDL2/SDL_ttf
+	url = https://github.com/libsdl-org/SDL_ttf.git
+[submodule "Externals/libpng"]
+	path = Externals/libpng
+	url = https://github.com/glennrp/libpng.git
+[submodule "Externals/zlib"]
+	path = Externals/zlib
+	url = https://github.com/madler/zlib.git
+[submodule "Externals/physfs"]
+	path = Externals/physfs
+	url = https://github.com/icculus/physfs.git
+[submodule "Externals/rapidjson"]
+	path = Externals/rapidjson
+	url = https://github.com/Tencent/rapidjson.git
+[submodule "Externals/dirent"]
+	path = Externals/dirent
+	url = https://github.com/tronkko/dirent.git
