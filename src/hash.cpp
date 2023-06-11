@@ -28,7 +28,7 @@ unsigned long djb2Hash(char* str)
 void ttfTextHash_deconstructor(void* data)
 {
 	ttfTextHash_t* hashedVal = static_cast<ttfTextHash_t*>(data);
-	SDL_FreeSurface(hashedVal->surf);
+	SDL_DestroySurface(hashedVal->surf);
 	free(hashedVal->str);
 	free(data);
 }

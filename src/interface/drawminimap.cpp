@@ -87,7 +87,7 @@ void cleanupMinimapTextures() {
 			minimapTextures[c] = nullptr;
 		}
 		if (minimapSurfaces[c]) {
-			SDL_FreeSurface(minimapSurfaces[c]);
+			SDL_DestroySurface(minimapSurfaces[c]);
 			minimapSurfaces[c] = nullptr;
 		}
 	}
@@ -268,7 +268,7 @@ void drawMinimap(const int player, SDL_Rect rect, bool drawingSharedMap)
 		minimapTextures[player]->load(minimapSurface, false, true);
 		if ( minimapSurfaces[player] ) {
 			SDL_UnlockSurface(minimapSurfaces[player]);
-			SDL_FreeSurface(minimapSurfaces[player]);
+			SDL_DestroySurface(minimapSurfaces[player]);
 		}
 		SDL_UnlockSurface(minimapSurface);
 		minimapSurfaces[player] = minimapSurface;
@@ -278,7 +278,7 @@ void drawMinimap(const int player, SDL_Rect rect, bool drawingSharedMap)
 			SDL_UnlockSurface(minimapSurfaces[player]);
 		}
 		SDL_UnlockSurface(minimapSurface);
-		SDL_FreeSurface(minimapSurface);
+		SDL_DestroySurface(minimapSurface);
 		minimapSurface = nullptr;
 	}
     

@@ -42,7 +42,7 @@ Image::Image(const char* _name) {
 	// translate the original surface to an RGBA surface
 	SDL_Surface* newSurf = SDL_CreateRGBSurface(0, surf->w, surf->h, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
 	SDL_BlitSurface(surf, nullptr, newSurf, nullptr); // blit onto a purely RGBA Surface
-	SDL_FreeSurface(surf);
+	SDL_DestroySurface(surf);
 	surf = newSurf;
 
 	(void)finalize();
@@ -67,7 +67,7 @@ bool Image::finalize() {
 
 Image::~Image() {
 	if (surf) {
-		SDL_FreeSurface(surf);
+		SDL_DestroySurface(surf);
 		surf = nullptr;
 	}
 	if (texid) {
@@ -76,7 +76,7 @@ Image::~Image() {
 	}
 	if ( outlineSurf )
 	{
-		SDL_FreeSurface(outlineSurf);
+		SDL_DestroySurface(outlineSurf);
 		outlineSurf = nullptr;
 	}
 }

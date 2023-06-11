@@ -57,9 +57,9 @@ public:
 
 		//! gamepad binding info
 		int padIndex = -1;
-		SDL_GameController* pad = nullptr;
-		SDL_GameControllerAxis padAxis = SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_INVALID;
-		SDL_GameControllerButton padButton = SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_INVALID;
+		SDL_Gamepad* pad = nullptr;
+		SDL_GamepadAxis padAxis = SDL_GamepadAxis::SDL_GAMEPAD_AXIS_INVALID;
+		SDL_GamepadButton padButton = SDL_GamepadButton::SDL_GAMEPAD_BUTTON_INVALID;
 		bool padAxisNegative = false;
 
 		//! joystick binding info
@@ -188,7 +188,7 @@ public:
 	//! list of connected input devices
 	static std::string lastInputOfAnyKind;
 	static int waitingToBindControllerForPlayer;
-	static std::unordered_map<int, SDL_GameController*> gameControllers;
+	static std::unordered_map<int, SDL_Gamepad*> gameControllers;
 	static std::unordered_map<int, SDL_Joystick*> joysticks;
     static std::unordered_map<SDL_Keycode, bool> keys;
 	static bool mouseButtons[18];

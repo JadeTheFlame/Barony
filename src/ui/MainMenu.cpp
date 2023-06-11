@@ -796,7 +796,7 @@ namespace MainMenu {
 	        fireTexture = nullptr;
 	    }
 	    if (fireSurface) {
-            SDL_FreeSurface(fireSurface);
+            SDL_DestroySurface(fireSurface);
             fireSurface = nullptr;
 	    }
     }

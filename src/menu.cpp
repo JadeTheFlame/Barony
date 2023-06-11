@@ -3649,7 +3649,7 @@ void handleMainMenu(bool mode)
 			ttfPrintText(ttf12, subx1 + 8, suby2 - 80, language[1326]);
 
 			// enter character name
-			if ( !SDL_IsTextInputActive() )
+			if ( !SDL_TextInputActive() )
 			{
 				if (inputstr != stats[0]->name) //TODO: NX PORT: Not sure if this portion is correct...the PC version of this chunk has changed significantly in the interleaving time.
 				{
@@ -3845,7 +3845,7 @@ void handleMainMenu(bool mode)
 		ttfPrintText(ttf12, subx1 + 16, suby1 + 40, serialInputText);
 
 		// enter character name
-		if ( serialVerifyWindow == 0 && !SDL_IsTextInputActive() )
+		if ( serialVerifyWindow == 0 && !SDL_TextInputActive() )
 		{
 			if (inputstr != serialInputText)
 			{
@@ -5411,7 +5411,7 @@ void handleMainMenu(bool mode)
 			ttfPrintText(ttf12, subx1 + 12, suby1 + 46, portnumber_char);
 
 			// enter port number
-			if ( !SDL_IsTextInputActive() )
+			if ( !SDL_TextInputActive() )
 			{
 				SDL_StartTextInput(); //TODO: NX PORT: Why is the order different in some of these chunks? For example, some of them start text input first, others start it after the below chunk of code.
 				if (inputstr != portnumber_char)
@@ -5453,7 +5453,7 @@ void handleMainMenu(bool mode)
 			}
 
 			// enter address
-			if ( !SDL_IsTextInputActive() )
+			if ( !SDL_TextInputActive() )
 			{
 				SDL_StartTextInput();
 
@@ -6017,7 +6017,7 @@ void handleMainMenu(bool mode)
 		}
 
 		// handle chatbox text entry
-		if ( !SDL_IsTextInputActive() )
+		if ( !SDL_TextInputActive() )
 		{
 			//TODO: NX PORT: Does this need to be updated for the Switch? Even if only to just disable this feature entirely?
 			// this is the default text entry box in this window.
@@ -7368,13 +7368,13 @@ void handleMainMenu(bool mode)
 									}
 								}
 
-								if ( gamemods_uploadStatus == 3 && !SDL_IsTextInputActive() )
+								if ( gamemods_uploadStatus == 3 && !SDL_TextInputActive() )
 								{
 									inputstr = gamemods_uploadTitle;
 									SDL_StartTextInput();
 								}
 								inputlen = 30;
-								if ( SDL_IsTextInputActive() && gamemods_currentEditField == fields
+								if ( SDL_TextInputActive() && gamemods_currentEditField == fields
 									&& (ticks - cursorflash) % TICKS_PER_SECOND < TICKS_PER_SECOND / 2 )
 								{
 									int x;
@@ -7924,13 +7924,13 @@ void handleMainMenu(bool mode)
 			filename_pady += TTF12_HEIGHT + 8;
 			drawDepressed(filename_padx - 4, filename_pady - 4, filename_padx + 32 * TTF12_WIDTH + 8, filename_pady + TTF12_HEIGHT);
 			ttfPrintTextFormatted(ttf12, filename_padx, filename_pady, "%s", gamemods_newBlankDirectory);
-			if ( !SDL_IsTextInputActive() )
+			if ( !SDL_TextInputActive() )
 			{
 				inputstr = gamemods_newBlankDirectory;
 				SDL_StartTextInput();
 			}
 			inputlen = 30;
-			if ( SDL_IsTextInputActive()
+			if ( SDL_TextInputActive()
 				&& (ticks - cursorflash) % TICKS_PER_SECOND < TICKS_PER_SECOND / 2 )
 			{
 				int x;
@@ -11225,28 +11225,29 @@ void openGameoverWindow()
 
 int getNumDisplays()
 {
-	int numdisplays = SDL_GetNumVideoDisplays();
+	int numdisplays;
+	SDL_GetDisplays(&numdisplays);
 	printlog("display count: %d.\n", numdisplays);
 	return numdisplays;
 }
 
 void getResolutionList(int device_id, std::list<resolution>& resolutions)
 {
-	int nummodes = SDL_GetNumDisplayModes(device_id);
+	int nummodes;
+	const SDL_DisplayMode* displaymodes = *SDL_GetFullscreenDisplayModes(device_id, &nummodes);
 	printlog("display mode count: %d.\n", nummodes);
 
-	SDL_DisplayMode mode;
-	for (int i = 0; i < nummodes; i++)
+	for (size_t i = 0; i < nummodes; i++)
 	{
-		SDL_GetDisplayMode(device_id, i, &mode);
+		SDL_DisplayMode mode = displaymodes[i];
 
 		// resolutions below 1024x768 are not supported
-		if ( mode.w < 1024 || mode.h < 720 || mode.refresh_rate == 0 )
+		if (mode.w < 1024 || mode.h < 720 || mode.refresh_rate == 0)
 		{
-		    continue;
+			continue;
 		}
 
-		resolution res{mode.w, mode.h, mode.refresh_rate};
+		resolution res{ mode.w, mode.h, mode.refresh_rate };
 		resolutions.push_back(res);
 	}
 
@@ -12383,7 +12384,7 @@ bool replayLastCharacter(const int index, int multiplayer)
 
 void buttonRandomName(button_t* my)
 {
-	if ( !SDL_IsTextInputActive() || charcreation_step != 4 )
+	if ( !SDL_TextInputActive() || charcreation_step != 4 )
 	{
 		return;
 	}
@@ -13950,7 +13951,7 @@ size_t serialHash(const std::string& input)
 void buttonConfirmSerial(button_t* my)
 {
 	serialVerifyWindow = 1;
-	if ( SDL_IsTextInputActive() )
+	if ( SDL_TextInputActive() )
 	{
 		SDL_StopTextInput();
 	}

@@ -24659,7 +24659,7 @@ struct enemybarMapLowDurationTick_k {
 			{
 				if ( entry.second )
 				{
-					SDL_FreeSurface(entry.second);
+					SDL_DestroySurface(entry.second);
 					entry.second = nullptr;
 				}
 			}
@@ -24720,7 +24720,7 @@ struct enemybarMapFx2_lowDuration_k {
 			{
 				if ( entry.second )
 				{
-					SDL_FreeSurface(entry.second);
+					SDL_DestroySurface(entry.second);
 					entry.second = nullptr;
 				}
 			}
@@ -25184,11 +25184,11 @@ EnemyHPDamageBarHandler::EnemyHPDetails::~EnemyHPDetails()
 	if ( !bEnemyBarSimpleBlit )
 	{
 		if ( worldSurfaceSpriteStatusEffects ) {
-			SDL_FreeSurface(worldSurfaceSpriteStatusEffects);
+			SDL_DestroySurface(worldSurfaceSpriteStatusEffects);
 			worldSurfaceSpriteStatusEffects = nullptr;
 		}
 		if ( worldSurfaceSprite ) {
-			SDL_FreeSurface(worldSurfaceSprite);
+			SDL_DestroySurface(worldSurfaceSprite);
 			worldSurfaceSprite = nullptr;
 		}
 	}
@@ -25627,12 +25627,12 @@ void Player::HUD_t::updateEnemyBar2(Frame* whichFrame, void* enemyHPDetails)
 		}
 		if ( enemyDetails->worldSurfaceSprite )
 		{
-			SDL_FreeSurface(enemyDetails->worldSurfaceSprite);
+			SDL_DestroySurface(enemyDetails->worldSurfaceSprite);
 			enemyDetails->worldSurfaceSprite = nullptr;
 		}
 		if ( enemyDetails->worldSurfaceSpriteStatusEffects )
 		{
-			SDL_FreeSurface(enemyDetails->worldSurfaceSpriteStatusEffects);
+			SDL_DestroySurface(enemyDetails->worldSurfaceSpriteStatusEffects);
 			enemyDetails->worldSurfaceSpriteStatusEffects = nullptr;
 		}
 
@@ -26068,7 +26068,7 @@ void Player::HUD_t::updateEnemyBar(Frame* whichFrame)
 		}
 		if ( enemyDetails->worldSurfaceSprite )
 		{
-			SDL_FreeSurface(enemyDetails->worldSurfaceSprite);
+			SDL_DestroySurface(enemyDetails->worldSurfaceSprite);
 			enemyDetails->worldSurfaceSprite = nullptr;
 		}
 		enemyDetails->worldSurfaceSprite = enemyDetails->blitEnemyBar(player.playernum, enemyDetails->worldSurfaceSpriteStatusEffects);
@@ -32983,7 +32983,7 @@ SDL_Surface* Player::WorldUI_t::WorldTooltipItem_t::blitItemWorldTooltip(Item* i
 
 		if ( itemWorldTooltipSurface )
 		{
-			SDL_FreeSurface(itemWorldTooltipSurface);
+			SDL_DestroySurface(itemWorldTooltipSurface);
 			itemWorldTooltipSurface = nullptr;
 		}
 		itemWorldTooltipSurface = SDL_CreateRGBSurface(0, tooltip.w, tooltip.h, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
@@ -33276,7 +33276,7 @@ void Player::WorldUI_t::WorldTooltipDialogue_t::Dialogue_t::deactivate()
 	DialogueType_t dialogueType = DIALOGUE_NONE;
 	if ( dialogueTooltipSurface )
 	{
-		SDL_FreeSurface(dialogueTooltipSurface);
+		SDL_DestroySurface(dialogueTooltipSurface);
 		dialogueTooltipSurface = nullptr;
 	}
 }
@@ -33596,7 +33596,7 @@ SDL_Surface* Player::WorldUI_t::WorldTooltipDialogue_t::Dialogue_t::blitDialogue
 
 	if ( dialogueTooltipSurface )
 	{
-		SDL_FreeSurface(dialogueTooltipSurface);
+		SDL_DestroySurface(dialogueTooltipSurface);
 		dialogueTooltipSurface = nullptr;
 	}
 

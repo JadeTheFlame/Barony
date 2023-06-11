@@ -108,7 +108,7 @@ class NetHandler
 {
 	SDL_Thread* steam_packet_thread;
 	bool continue_multithreading_steam_packets;
-	SDL_mutex* game_packets_lock;
+	SDL_Mutex* game_packets_lock;
 public:
 	NetHandler();
 	~NetHandler();
@@ -129,7 +129,7 @@ public:
 	 */
 	SteamPacketWrapper* getGamePacket();
 
-	SDL_mutex* continue_multithreading_steam_packets_lock;
+	SDL_Mutex* continue_multithreading_steam_packets_lock;
 };
 extern NetHandler* net_handler;
 

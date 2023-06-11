@@ -18,7 +18,7 @@ Text::Text(const char* _name) {
 
 Text::~Text() {
 	if (surf) {
-		SDL_FreeSurface(surf);
+		SDL_DestroySurface(surf);
 		surf = nullptr;
 	}
 	if (texid) {
@@ -42,7 +42,7 @@ static ConsoleVariable<bool> cvar_text_delay_dumpcache("/text_delay_dumpcache", 
 
 void Text::render() {
 	if (surf) {
-		SDL_FreeSurface(surf);
+		SDL_DestroySurface(surf);
 		surf = nullptr;
 	}
 	if (texid) {
@@ -144,7 +144,7 @@ void Text::render() {
 		SDL_Rect rect;
 		rect.x = outlineSize; rect.y = outlineSize;
 		SDL_BlitSurface(text, NULL, surf, &rect);
-		SDL_FreeSurface(text);
+		SDL_DestroySurface(text);
 	}
 	else {
 		TTF_SetFontOutline(ttf, 0);
@@ -202,7 +202,7 @@ void Text::render() {
 	} else {
 		SDL_BlitSurface(surf, &src, newSurf, &dest);
 	}
-	SDL_FreeSurface(surf);
+	SDL_DestroySurface(surf);
 	surf = newSurf;
 
 	// load the new surface as a GL texture

@@ -743,11 +743,11 @@ bool handleEvents(void)
 		// Global events
 		switch ( event.type )
 		{
-			case SDL_QUIT: // if SDL receives the shutdown signal
+			case SDL_EVENT_QUIT: // if SDL receives the shutdown signal
 				buttonExit(NULL);
 				break;
-			case SDL_KEYDOWN: // if a key is pressed...
-				if ( SDL_IsTextInputActive() )
+			case SDL_EVENT_KEY_DOWN: // if a key is pressed...
+				if ( SDL_TextInputActive() )
 				{
 #ifdef APPLE
 					if ( (event.key.keysym.sym == SDLK_DELETE || event.key.keysym.sym == SDLK_BACKSPACE) && strlen(inputstr) > 0 )
@@ -793,12 +793,12 @@ bool handleEvents(void)
 						cursorflash = ticks;
 					}
 #endif
-					else if ( event.key.keysym.sym == SDLK_c && SDL_GetModState()&KMOD_CTRL )
+					else if ( event.key.keysym.sym == SDLK_c && SDL_GetModState()&SDL_KMOD_CTRL )
 					{
 						SDL_SetClipboardText(inputstr);
 						cursorflash = ticks;
 					}
-					else if ( event.key.keysym.sym == SDLK_v && SDL_GetModState()&KMOD_CTRL )
+					else if ( event.key.keysym.sym == SDLK_v && SDL_GetModState()&SDL_KMOD_CTRL )
 					{
 						strncpy(inputstr, SDL_GetClipboardText(), inputlen);
 						cursorflash = ticks;
@@ -807,13 +807,13 @@ bool handleEvents(void)
 				lastkeypressed = event.key.keysym.sym;
 				keystatus[event.key.keysym.sym] = 1; // set this key's index to 1
 				break;
-			case SDL_KEYUP: // if a key is unpressed...
+			case SDL_EVENT_KEY_UP: // if a key is unpressed...
 				keystatus[event.key.keysym.sym] = 0; // set this key's index to 0
 				break;
-			case SDL_TEXTINPUT:
-				if ( (event.text.text[0] != 'c' && event.text.text[0] != 'C') || !(SDL_GetModState()&KMOD_CTRL) )
+			case SDL_EVENT_TEXT_INPUT:
+				if ( (event.text.text[0] != 'c' && event.text.text[0] != 'C') || !(SDL_GetModState()&SDL_KMOD_CTRL) )
 				{
-					if ( (event.text.text[0] != 'v' && event.text.text[0] != 'V') || !(SDL_GetModState()&KMOD_CTRL) )
+					if ( (event.text.text[0] != 'v' && event.text.text[0] != 'V') || !(SDL_GetModState()&SDL_KMOD_CTRL) )
 					{
 						if ( event.text.text[0] != '`' )
 						{
@@ -841,7 +841,7 @@ bool handleEvents(void)
 					}
 				}
 				break;
-			case SDL_MOUSEMOTION: // if the mouse is moved...
+			case SDL_EVENT_MOUSE_MOTION: // if the mouse is moved...
                 float factorX;
                 float factorY;
                 {
@@ -856,13 +856,13 @@ bool handleEvents(void)
 				mousexrel = event.motion.xrel;
 				mouseyrel = event.motion.yrel;
 				break;
-			case SDL_MOUSEBUTTONDOWN: // if a mouse button is pressed...
+			case SDL_EVENT_MOUSE_BUTTON_DOWN: // if a mouse button is pressed...
 				mousestatus[event.button.button] = 1; // set this mouse button to 1
 				break;
-			case SDL_MOUSEBUTTONUP: // if a mouse button is released...
+			case SDL_EVENT_MOUSE_BUTTON_UP: // if a mouse button is released...
 				mousestatus[event.button.button] = 0; // set this mouse button to 0
 				break;
-			case SDL_MOUSEWHEEL:
+			case SDL_EVENT_MOUSE_WHEEL:
 				if ( event.wheel.y > 0 )
 				{
 					mousestatus[SDL_BUTTON_WHEELUP] = 1;
@@ -882,13 +882,13 @@ bool handleEvents(void)
 				mousestatus[SDL_BUTTON_WHEELUP] = 0;
 				mousestatus[SDL_BUTTON_WHEELDOWN] = 0;
 				break;
-			case SDL_USEREVENT: // if the game timer elapses
+			case SDL_EVENT_USER: // if the game timer elapses
 				mainLogic();
 				mousexrel = 0;
 				mouseyrel = 0;
 				break;
 			case SDL_WINDOWEVENT: // if the window is resized
-				if ( event.window.event == SDL_WINDOWEVENT_RESIZED )
+				if ( event.window.event == SDL_EVENT_WINDOW_RESIZED )
 				{
 					if (fullscreen || ticks == 0)
 					{
@@ -944,12 +944,12 @@ Uint32 timerCallback(Uint32 interval, void* param)
 	SDL_Event event;
 	SDL_UserEvent userevent;
 
-	userevent.type = SDL_USEREVENT;
+	userevent.type = SDL_EVENT_USER;
 	userevent.code = 0;
 	userevent.data1 = NULL;
 	userevent.data2 = NULL;
 
-	event.type = SDL_USEREVENT;
+	event.type = SDL_EVENT_USER;
 	event.user = userevent;
 
 	ticks++;
@@ -1551,7 +1551,7 @@ int main(int argc, char** argv)
     
     // init sdl
     Uint32 init_flags = SDL_INIT_VIDEO | SDL_INIT_EVENTS;
-    init_flags |= SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC;
+    init_flags |= SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD | SDL_INIT_HAPTIC;
     if (SDL_Init(init_flags) == -1)
     {
         printlog("failed to initialize SDL: %s\n", SDL_GetError());
@@ -2077,7 +2077,7 @@ int main(int argc, char** argv)
 		butSelect->x = xres - 96;
 		butFill->x = xres - 96;
 
-		bool wasTextEditable = SDL_IsTextInputActive();
+		bool wasTextEditable = SDL_TextInputActive();
 		if ( !wasTextEditable )
 		{
 			textInsertCaratPosition = -1;
@@ -2815,7 +2815,7 @@ int main(int argc, char** argv)
 					printText(font8x8_bmp, subx1 + 8, suby2 - 44, filename);
 
 					// enter filename
-					if ( !SDL_IsTextInputActive() )
+					if ( !SDL_TextInputActive() )
 					{
 						SDL_StartTextInput();
 						inputstr = filename;
@@ -2908,7 +2908,7 @@ int main(int argc, char** argv)
 					printTextFormatted(font8x8_bmp, subx1 + 8, suby2 - 16, "Load Dir: %smaps/", physfs_openDirectory.c_str());
 
 					// enter filename
-					if ( !SDL_IsTextInputActive() )
+					if ( !SDL_TextInputActive() )
 					{
 						SDL_StartTextInput();
 						inputstr = foldername;
@@ -3320,7 +3320,7 @@ int main(int argc, char** argv)
 
 					if ( editproperty == 0 )   // edit map name
 					{
-						if ( !SDL_IsTextInputActive() )
+						if ( !SDL_TextInputActive() )
 						{
 							SDL_StartTextInput();
 							inputstr = nametext;
@@ -3335,7 +3335,7 @@ int main(int argc, char** argv)
 					pad_y1 += 36;
 					if ( editproperty == 1 )   // edit author name
 					{
-						if ( !SDL_IsTextInputActive() )
+						if ( !SDL_TextInputActive() )
 						{
 							SDL_StartTextInput();
 							inputstr = authortext;
@@ -3350,7 +3350,7 @@ int main(int argc, char** argv)
 					pad_y1 += 24;
 					if ( editproperty == 2 )   // edit map skybox
 					{
-						if ( !SDL_IsTextInputActive() )
+						if ( !SDL_TextInputActive() )
 						{
 							SDL_StartTextInput();
 							inputstr = skyboxtext;
@@ -3365,7 +3365,7 @@ int main(int argc, char** argv)
 					pad_y1 += 24;
 					if ( editproperty == 3 )   // edit map ceiling tiles
 					{
-						if ( !SDL_IsTextInputActive() )
+						if ( !SDL_TextInputActive() )
 						{
 							SDL_StartTextInput();
 							inputstr = mapflagtext[MAP_FLAG_CEILINGTILE];
@@ -3379,7 +3379,7 @@ int main(int argc, char** argv)
 					}
 					if ( editproperty == 13 )   // edit map width
 					{
-						if ( !SDL_IsTextInputActive() )
+						if ( !SDL_TextInputActive() )
 						{
 							SDL_StartTextInput();
 							inputstr = widthtext;
@@ -3393,7 +3393,7 @@ int main(int argc, char** argv)
 					}
 					if ( editproperty == 14 )   // edit map height
 					{
-						if ( !SDL_IsTextInputActive() )
+						if ( !SDL_TextInputActive() )
 						{
 							SDL_StartTextInput();
 							inputstr = heighttext;
@@ -3408,7 +3408,7 @@ int main(int argc, char** argv)
 					pad_y1 += 24;
 					if ( editproperty == 4 )   // edit min entity gen
 					{
-						if ( !SDL_IsTextInputActive() )
+						if ( !SDL_TextInputActive() )
 						{
 							SDL_StartTextInput();
 							inputstr = mapflagtext[MAP_FLAG_GENTOTALMIN];
@@ -3421,7 +3421,7 @@ int main(int argc, char** argv)
 					}
 					if ( editproperty == 5 )   // edit max entity gen
 					{
-						if ( !SDL_IsTextInputActive() )
+						if ( !SDL_TextInputActive() )
 						{
 							SDL_StartTextInput();
 							inputstr = mapflagtext[MAP_FLAG_GENTOTALMAX];
@@ -3435,7 +3435,7 @@ int main(int argc, char** argv)
 					pad_y1 += 24;
 					if ( editproperty == 6 )   // edit min monster gen
 					{
-						if ( !SDL_IsTextInputActive() )
+						if ( !SDL_TextInputActive() )
 						{
 							SDL_StartTextInput();
 							inputstr = mapflagtext[MAP_FLAG_GENMONSTERMIN];
@@ -3448,7 +3448,7 @@ int main(int argc, char** argv)
 					}
 					if ( editproperty == 7 )   // edit max monster gen
 					{
-						if ( !SDL_IsTextInputActive() )
+						if ( !SDL_TextInputActive() )
 						{
 							SDL_StartTextInput();
 							inputstr = mapflagtext[MAP_FLAG_GENMONSTERMAX];
@@ -3462,7 +3462,7 @@ int main(int argc, char** argv)
 					pad_y1 += 24;
 					if ( editproperty == 8 )   // edit min monster gen
 					{
-						if ( !SDL_IsTextInputActive() )
+						if ( !SDL_TextInputActive() )
 						{
 							SDL_StartTextInput();
 							inputstr = mapflagtext[MAP_FLAG_GENLOOTMIN];
@@ -3475,7 +3475,7 @@ int main(int argc, char** argv)
 					}
 					if ( editproperty == 9 )   // edit max monster gen
 					{
-						if ( !SDL_IsTextInputActive() )
+						if ( !SDL_TextInputActive() )
 						{
 							SDL_StartTextInput();
 							inputstr = mapflagtext[MAP_FLAG_GENLOOTMAX];
@@ -3489,7 +3489,7 @@ int main(int argc, char** argv)
 					pad_y1 += 24;
 					if ( editproperty == 10 )   // edit min decoration gen
 					{
-						if ( !SDL_IsTextInputActive() )
+						if ( !SDL_TextInputActive() )
 						{
 							SDL_StartTextInput();
 							inputstr = mapflagtext[MAP_FLAG_GENDECORATIONMIN];
@@ -3502,7 +3502,7 @@ int main(int argc, char** argv)
 					}
 					if ( editproperty == 11 )   // edit max decoration gen
 					{
-						if ( !SDL_IsTextInputActive() )
+						if ( !SDL_TextInputActive() )
 						{
 							SDL_StartTextInput();
 							inputstr = mapflagtext[MAP_FLAG_GENDECORATIONMAX];
@@ -3516,7 +3516,7 @@ int main(int argc, char** argv)
 					pad_y1 += 24;
 					if ( editproperty == 12 )   // edit perimeter gap
 					{
-						if ( !SDL_IsTextInputActive() )
+						if ( !SDL_TextInputActive() )
 						{
 							SDL_StartTextInput();
 							inputstr = mapflagtext[MAP_FLAG_PERIMETER_GAP];
@@ -3833,7 +3833,7 @@ int main(int argc, char** argv)
 							if ( editproperty < numProperties * 2 - 2 )   // edit property values
 							{
 								// limit of properties is twice the vertical count
-								if ( !SDL_IsTextInputActive() )
+								if ( !SDL_TextInputActive() )
 								{
 									SDL_StartTextInput();
 									inputstr = spriteProperties[0];
@@ -4074,7 +4074,7 @@ int main(int argc, char** argv)
 						}
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -4515,7 +4515,7 @@ int main(int argc, char** argv)
 						
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -4744,7 +4744,7 @@ int main(int argc, char** argv)
 						}
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -4941,7 +4941,7 @@ int main(int argc, char** argv)
 						}
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -5040,7 +5040,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -5182,7 +5182,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -5360,7 +5360,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -5461,7 +5461,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -5616,7 +5616,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -5747,7 +5747,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -5865,7 +5865,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -6074,7 +6074,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -6203,7 +6203,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -6305,7 +6305,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -6558,12 +6558,12 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
 							}
-							if ( SDL_IsTextInputActive() )
+							if ( SDL_TextInputActive() )
 							{
 								if ( textInsertCaratPosition >= 0 )
 								{
@@ -6853,7 +6853,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -7042,7 +7042,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -7193,7 +7193,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -7334,7 +7334,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -7445,7 +7445,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -7524,7 +7524,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -7631,7 +7631,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -7738,7 +7738,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -7840,7 +7840,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -7930,7 +7930,7 @@ int main(int argc, char** argv)
 
 					//	if ( editproperty < numProperties )   // edit
 					//	{
-					//		if ( !SDL_IsTextInputActive() )
+					//		if ( !SDL_TextInputActive() )
 					//		{
 					//			SDL_StartTextInput();
 					//			inputstr = spriteProperties[0];
@@ -8145,7 +8145,7 @@ int main(int argc, char** argv)
 
 						if ( editproperty < numProperties )   // edit
 						{
-							if ( !SDL_IsTextInputActive() )
+							if ( !SDL_TextInputActive() )
 							{
 								SDL_StartTextInput();
 								inputstr = spriteProperties[0];
@@ -8376,7 +8376,7 @@ int main(int argc, char** argv)
 			}
 			else
 			{
-				if ( SDL_IsTextInputActive() )
+				if ( SDL_TextInputActive() )
 				{
 					SDL_StopTextInput();
 				}
@@ -9214,10 +9214,10 @@ int main(int argc, char** argv)
 
 	// deinit
 	SDL_SetCursor(cursorArrow);
-	SDL_FreeCursor(cursorPencil);
-	SDL_FreeCursor(cursorPoint);
-	SDL_FreeCursor(cursorBrush);
-	SDL_FreeCursor(cursorFill);
+	SDL_DestroyCursor(cursorPencil);
+	SDL_DestroyCursor(cursorPoint);
+	SDL_DestroyCursor(cursorBrush);
+	SDL_DestroyCursor(cursorFill);
 	if ( palette != NULL )
 	{
 		free(palette);

@@ -1469,7 +1469,7 @@ SDL_Surface* loadImage(char const * const filename)
 	GL_CHECK_ERR(glLoadTexture(allsurfaces[imgref], imgref));
 
 	// free the translated surface
-	SDL_FreeSurface(originalSurface);
+	SDL_DestroySurface(originalSurface);
 
 	imgref++;
 	return allsurfaces[imgref - 1];
@@ -3229,7 +3229,7 @@ void physfsReloadSprites(bool reloadAll) //TODO: NX PORT: Any changes needed her
 				spriteFile.append(PHYSFS_getDirSeparator()).append(name);
 				if ( sprites[c] )
 				{
-					SDL_FreeSurface(sprites[c]);
+					SDL_DestroySurface(sprites[c]);
 				}
 				char fullname[PATH_MAX];
 				strncpy(fullname, spriteFile.c_str(), PATH_MAX - 1);
@@ -3309,7 +3309,7 @@ void physfsReloadTiles(bool reloadAll)
 				tileFile.append(PHYSFS_getDirSeparator()).append(name);
 				if ( tiles[c] )
 				{
-					SDL_FreeSurface(tiles[c]);
+					SDL_DestroySurface(tiles[c]);
 				}
 				char fullname[PATH_MAX];
 				strncpy(fullname, tileFile.c_str(), PATH_MAX - 1);
@@ -3519,7 +3519,7 @@ void physfsReloadItemSprites(bool reloadAll)
 				{
 					if ( *surface )
 					{
-						SDL_FreeSurface(*surface);
+						SDL_DestroySurface(*surface);
 					}
 				}
 			}
@@ -3847,7 +3847,7 @@ void physfsReloadSystemImages()
 				char filepathChar[1024];
 				strncpy(filepathChar, filepath.c_str(), 1023);
 
-				SDL_FreeSurface(*(line.first));
+				SDL_DestroySurface(*(line.first));
 				*(line.first) = loadImage(filepathChar);
 
 				if ( !(*(line.first)))

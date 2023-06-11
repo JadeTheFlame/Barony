@@ -1711,26 +1711,26 @@ void drawStatus(int player)
 
 				for ( int i = 0; i < 3; ++i )
 				{
-					int button = SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_B + i;
+					int button = SDL_GamepadButton::SDL_GAMEPAD_BUTTON_B + i;
 					if ( inputs.bControllerRawInputPressed(player, 301 + button) )
 					{
-						if ( inputs.bControllerRawInputPressed(player, 301 + SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_DOWN) )
+						if ( inputs.bControllerRawInputPressed(player, 301 + SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_DOWN) )
 						{
 							inputs.controllerClearRawInput(player, 301 + button);
-							inputs.controllerClearRawInput(player, 301 + SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_DOWN);
+							inputs.controllerClearRawInput(player, 301 + SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_DOWN);
 							inputs.controllerClearRawInputRelease(player, 301 + button);
 							break;
 						}
 						
 						switch ( button )
 						{
-							case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_B:
+							case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_B:
 								pressed = Player::Hotbar_t::GROUP_RIGHT;
 								break;
-							case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_Y:
+							case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_Y:
 								pressed = Player::Hotbar_t::GROUP_MIDDLE;
 								break;
-							case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_X:
+							case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_X:
 								pressed = Player::Hotbar_t::GROUP_LEFT;
 								break;
 							default:
@@ -1743,7 +1743,7 @@ void drawStatus(int player)
 						{
 							slotOrder = { 0, 2, 1 };
 						}
-						if ( button == SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_B )
+						if ( button == SDL_GamepadButton::SDL_GAMEPAD_BUTTON_B )
 						{
 							centerSlot = 7;
 							if ( hotbar_t.faceMenuAlternateLayout )
@@ -1755,7 +1755,7 @@ void drawStatus(int player)
 								slotOrder = { 6, 7, 8 };
 							}
 						}
-						else if ( button == SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_Y )
+						else if ( button == SDL_GamepadButton::SDL_GAMEPAD_BUTTON_Y )
 						{
 							centerSlot = 4;
 							slotOrder = { 3, 4, 5 };
@@ -1766,11 +1766,11 @@ void drawStatus(int player)
 							if ( true )
 							{
 								// temp test
-								if ( inputs.bControllerRawInputPressed(player, 301 + SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER) )
+								if ( inputs.bControllerRawInputPressed(player, 301 + SDL_GamepadButton::SDL_GAMEPAD_BUTTON_LEFT_SHOULDER) )
 								{
 									hotbar_t.selectHotbarSlot(slotOrder[0]);
 								}
-								else if ( inputs.bControllerRawInputPressed(player, 301 + SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER) )
+								else if ( inputs.bControllerRawInputPressed(player, 301 + SDL_GamepadButton::SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER) )
 								{
 									hotbar_t.selectHotbarSlot(slotOrder[2]);
 								}
@@ -1781,15 +1781,15 @@ void drawStatus(int player)
 							}
 							else
 							{
-								if ( inputs.bControllerRawInputPressed(player, 301 + SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER) )
+								if ( inputs.bControllerRawInputPressed(player, 301 + SDL_GamepadButton::SDL_GAMEPAD_BUTTON_LEFT_SHOULDER) )
 								{
 									hotbar_t.selectHotbarSlot(std::max(centerSlot - 1, hotbar_t.current_hotbar - 1));
-									inputs.controllerClearRawInput(player, 301 + SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
+									inputs.controllerClearRawInput(player, 301 + SDL_GamepadButton::SDL_GAMEPAD_BUTTON_LEFT_SHOULDER);
 								}
-								else if ( inputs.bControllerRawInputPressed(player, 301 + SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER) )
+								else if ( inputs.bControllerRawInputPressed(player, 301 + SDL_GamepadButton::SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER) )
 								{
 									hotbar_t.selectHotbarSlot(std::min(centerSlot + 1, hotbar_t.current_hotbar + 1));
-									inputs.controllerClearRawInput(player, 301 + SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
+									inputs.controllerClearRawInput(player, 301 + SDL_GamepadButton::SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER);
 								}
 								else if ( players[player]->hotbar.faceMenuButtonHeld == Player::Hotbar_t::GROUP_NONE )
 								{
@@ -1799,15 +1799,15 @@ void drawStatus(int player)
 						}
 						else
 						{
-							if ( inputs.bControllerRawInputPressed(player, 301 + SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER) )
+							if ( inputs.bControllerRawInputPressed(player, 301 + SDL_GamepadButton::SDL_GAMEPAD_BUTTON_LEFT_SHOULDER) )
 							{
 								hotbar_t.selectHotbarSlot(std::max(centerSlot - 1, hotbar_t.current_hotbar - 1));
-								inputs.controllerClearRawInput(player, 301 + SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
+								inputs.controllerClearRawInput(player, 301 + SDL_GamepadButton::SDL_GAMEPAD_BUTTON_LEFT_SHOULDER);
 							}
-							else if ( inputs.bControllerRawInputPressed(player, 301 + SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER) )
+							else if ( inputs.bControllerRawInputPressed(player, 301 + SDL_GamepadButton::SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER) )
 							{
 								hotbar_t.selectHotbarSlot(std::min(centerSlot + 1, hotbar_t.current_hotbar + 1));
-								inputs.controllerClearRawInput(player, 301 + SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
+								inputs.controllerClearRawInput(player, 301 + SDL_GamepadButton::SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER);
 							}
 							else if ( players[player]->hotbar.faceMenuButtonHeld == Player::Hotbar_t::GROUP_NONE )
 							{

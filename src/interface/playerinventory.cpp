@@ -6459,8 +6459,8 @@ void Player::HUD_t::updateFrameTooltip(Item* item, const int x, const int y, int
             auto binding = Input::inputs[player].input("Expand Inventory Tooltip");
             bool pressedGlyph = false;
             if ( binding.isBindingUsingGamepad()
-                && (binding.padButton == SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSTICK
-                    || binding.padButton == SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSTICK) )
+                && (binding.padButton == SDL_GamepadButton::SDL_GAMEPAD_BUTTON_LEFT_STICK
+                    || binding.padButton == SDL_GamepadButton::SDL_GAMEPAD_BUTTON_RIGHT_STICK) )
             {
                 pressedGlyph = true;
             }

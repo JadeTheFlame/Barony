@@ -74,7 +74,7 @@ SDL_Surface* SDL_PNGFormatAlpha(SDL_Surface* src)
 	rect.h = src->h;
 	surf = SDL_CreateRGBSurface(src->flags, src->w, src->h, 24,
 	                            src->format->Rmask, src->format->Gmask, src->format->Bmask, 0);
-	SDL_LowerBlit(src, &rect, surf, &rect);
+	SDL_BlitSurfaceUnchecked(src, &rect, surf, &rect);
 
 	return surf;
 }

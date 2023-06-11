@@ -768,7 +768,7 @@ void LobbyHandler_t::handleLobbyBrowser()
 		}
 
 #ifdef USE_EOS
-		if ( !SDL_IsTextInputActive() && showLobbyFilters && (searchType == LOBBY_CROSSPLAY || searchType == LOBBY_COMBINED) )
+		if ( !SDL_TextInputActive() && showLobbyFilters && (searchType == LOBBY_CROSSPLAY || searchType == LOBBY_COMBINED) )
 		{
 			inputstr = EOS.lobbySearchByCode;
 			SDL_StartTextInput();

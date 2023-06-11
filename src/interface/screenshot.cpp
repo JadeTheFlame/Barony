@@ -51,13 +51,13 @@ void takeScreenshot(const char* output_path)
     GL_CHECK_ERR(glReadPixels(0, 0, xres, yres, GL_BGRA, GL_UNSIGNED_BYTE, temp->pixels));
 	SDL_UnlockSurface(temp);
 	temp2 = flipSurface( temp, FLIP_VERTICAL );
-	SDL_FreeSurface( temp );
+	SDL_DestroySurface( temp );
 	temp = SDL_CreateRGBSurface(0, xres, yres, 24, 0, 0, 0, 0);
-	SDL_FillRect(temp, NULL, 0);
+	SDL_FillSurfaceRect(temp, NULL, 0);
 	SDL_BlitSurface(temp2, NULL, temp, NULL);
-	SDL_FreeSurface( temp2 );
+	SDL_DestroySurface( temp2 );
 	SDL_SavePNG( temp, filename );
-	SDL_FreeSurface( temp );
+	SDL_DestroySurface( temp );
 	if ( !intro && !output_path )
 	{
 		messagePlayer(clientnum, MESSAGE_MISC, "%s", filename);

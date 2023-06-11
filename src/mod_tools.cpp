@@ -4409,7 +4409,7 @@ void GlyphRenderer_t::renderGlyphsToPNGs()
 			}
 			if ( sprite )
 			{
-				SDL_FreeSurface(sprite);
+				SDL_DestroySurface(sprite);
 				sprite = nullptr;
 			}
 		}
@@ -4468,7 +4468,7 @@ void GlyphRenderer_t::renderGlyphsToPNGs()
 			}
 			if ( sprite )
 			{
-				SDL_FreeSurface(sprite);
+				SDL_DestroySurface(sprite);
 				sprite = nullptr;
 			}
 		}

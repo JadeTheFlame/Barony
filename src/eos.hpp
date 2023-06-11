@@ -78,7 +78,7 @@ public:
 		{
 			if ( loginBanner )
 			{
-				SDL_FreeSurface(loginBanner);
+				SDL_DestroySurface(loginBanner);
 			}
 		}
 	} AccountManager;

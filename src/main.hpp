@@ -683,9 +683,9 @@ extern int ofingery;
 static const unsigned NUM_MOUSE_STATUS = 6;
 extern Sint8 mousestatus[NUM_MOUSE_STATUS];
 //extern Sint8 omousestatus[NUM_MOUSE_STATUS];
-const int NUM_JOY_STATUS = SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_MAX;
+const int NUM_JOY_STATUS = SDL_GamepadButton::SDL_GAMEPAD_BUTTON_MAX;
 //extern Sint8 joystatus[NUM_JOY_STATUS];
-const int NUM_JOY_AXIS_STATUS = SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_MAX;
+const int NUM_JOY_AXIS_STATUS = SDL_GamepadAxis::SDL_GAMEPAD_AXIS_MAX;
 //extern Sint8 joy_trigger_status[NUM_JOY_TRIGGER_STATUS]; //0 = left, 1 = right.
 extern Uint32 cursorflash;
 extern Sint32 camx, camy;
@@ -789,6 +789,24 @@ extern Uint32 fov;
 extern Uint32 fpsLimit;
 //extern GLuint *vboid, *vaoid;
 extern SDL_Surface** allsurfaces;
+SDL_Surface* SDL_CreateRGBSurface(Uint32 flags, int width, int height, int depth, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
+{
+	return SDL_CreateSurface(width, height,
+		SDL_GetPixelFormatEnumForMasks(depth, Rmask, Gmask, Bmask, Amask));
+}
+SDL_Surface* SDL_CreateRGBSurfaceWithFormat(Uint32 flags, int width, int height, int depth, Uint32 format)
+{
+	return SDL_CreateSurface(width, height, format);
+}
+SDL_Surface* SDL_CreateRGBSurfaceFrom(void* pixels, int width, int height, int depth, int pitch, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
+{
+	return SDL_CreateSurfaceFrom(pixels, width, height, pitch,
+		SDL_GetPixelFormatEnumForMasks(depth, Rmask, Gmask, Bmask, Amask));
+}
+SDL_Surface* SDL_CreateRGBSurfaceWithFormatFrom(void* pixels, int width, int height, int depth, int pitch, Uint32 format)
+{
+	return SDL_CreateSurfaceFrom(pixels, width, height, pitch, format);
+}
 extern Uint32 numsprites;
 extern Uint32 numtiles;
 extern Uint32 nummodels;
@@ -927,6 +945,10 @@ extern bool ENABLE_STACK_TRACES;
 time_t getTime();
 char* getTimeFormatted(time_t t, char* buf, size_t size);
 char* getTimeAndDateFormatted(time_t t, char* buf, size_t size);
+
+#ifdef GetObject
+#undef GetObject
+#endif
 
 // I can't believe windows still defines these...
 #ifdef far

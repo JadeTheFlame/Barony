@@ -21,7 +21,7 @@ const float Input::analogToggleThreshold = .5f;
 const Uint32 Input::BUTTON_HELD_TICKS = TICKS_PER_SECOND / 4;
 const Uint32 Input::BUTTON_ANALOG_REPEAT_TICKS = TICKS_PER_SECOND / 4;
 std::unordered_map<std::string, SDL_Keycode> Input::keycodeNames;
-std::unordered_map<int, SDL_GameController*> Input::gameControllers;
+std::unordered_map<int, SDL_Gamepad*> Input::gameControllers;
 std::unordered_map<int, SDL_Joystick*> Input::joysticks;
 std::unordered_map<SDL_Keycode, bool> Input::keys;
 bool Input::mouseButtons[18] = { false };
@@ -366,16 +366,16 @@ Input::ControllerType Input::getControllerType(int index) {
         auto type = SDL_GameControllerTypeForIndex(device);
         switch(type) {
         default:
-        case SDL_CONTROLLER_TYPE_UNKNOWN: return ControllerType::Xbox;
-        case SDL_CONTROLLER_TYPE_XBOX360: return ControllerType::Xbox;
-        case SDL_CONTROLLER_TYPE_XBOXONE: return ControllerType::Xbox;
-        case SDL_CONTROLLER_TYPE_PS3: return ControllerType::PlayStation;
-        case SDL_CONTROLLER_TYPE_PS4: return ControllerType::PlayStation;
-        case SDL_CONTROLLER_TYPE_PS5: return ControllerType::PlayStation;
-        case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO: return ControllerType::NintendoSwitch;
-        //case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT: return ControllerType::NintendoSwitch;
-        //case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT: return ControllerType::NintendoSwitch;
-        //case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR: return ControllerType::NintendoSwitch;
+        case SDL_GAMEPAD_TYPE_UNKNOWN: return ControllerType::Xbox;
+        case SDL_GAMEPAD_TYPE_XBOX360: return ControllerType::Xbox;
+        case SDL_GAMEPAD_TYPE_XBOXONE: return ControllerType::Xbox;
+        case SDL_GAMEPAD_TYPE_PS3: return ControllerType::PlayStation;
+        case SDL_GAMEPAD_TYPE_PS4: return ControllerType::PlayStation;
+        case SDL_GAMEPAD_TYPE_PS5: return ControllerType::PlayStation;
+        case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_PRO: return ControllerType::NintendoSwitch;
+        //case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_LEFT: return ControllerType::NintendoSwitch;
+        //case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT: return ControllerType::NintendoSwitch;
+        //case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_PAIR: return ControllerType::NintendoSwitch;
         }
     }
 #endif
@@ -586,7 +586,7 @@ void Input::bind(const char* binding, const char* input) {
 		char* type = nullptr;
 		Uint32 index = (Uint32)strtol((const char*)(input + 3), &type, 10);
 		bool foundControllerForPlayer = false;
-		SDL_GameController* pad = nullptr;
+		SDL_Gamepad* pad = nullptr;
 #ifndef EDITOR
 		if ( auto controller = ::inputs.getController(player) )
 		{
@@ -600,59 +600,59 @@ void Input::bind(const char* binding, const char* input) {
 			if (strncmp(type, "Button", 6) == 0) {
 				if (strcmp((const char*)(type + 6), "A") == 0) {
 #ifdef NINTENDO
-					(*b).second.padButton = SDL_CONTROLLER_BUTTON_B;
+					(*b).second.padButton = SDL_GAMEPAD_BUTTON_B;
 #else
-					(*b).second.padButton = SDL_CONTROLLER_BUTTON_A;
+					(*b).second.padButton = SDL_GAMEPAD_BUTTON_A;
 #endif
 					(*b).second.type = binding_t::CONTROLLER_BUTTON;
 					return;
 				} else if (strcmp((const char*)(type + 6), "B") == 0) {
 #ifdef NINTENDO
-					(*b).second.padButton = SDL_CONTROLLER_BUTTON_A;
+					(*b).second.padButton = SDL_GAMEPAD_BUTTON_A;
 #else
-					(*b).second.padButton = SDL_CONTROLLER_BUTTON_B;
+					(*b).second.padButton = SDL_GAMEPAD_BUTTON_B;
 #endif
 					(*b).second.type = binding_t::CONTROLLER_BUTTON;
 					return;
 				} else if (strcmp((const char*)(type + 6), "X") == 0) {
 #ifdef NINTENDO
-					(*b).second.padButton = SDL_CONTROLLER_BUTTON_Y;
+					(*b).second.padButton = SDL_GAMEPAD_BUTTON_Y;
 #else
-					(*b).second.padButton = SDL_CONTROLLER_BUTTON_X;
+					(*b).second.padButton = SDL_GAMEPAD_BUTTON_X;
 #endif
 					(*b).second.type = binding_t::CONTROLLER_BUTTON;
 					return;
 				} else if (strcmp((const char*)(type + 6), "Y") == 0) {
 #ifdef NINTENDO
-					(*b).second.padButton = SDL_CONTROLLER_BUTTON_X;
+					(*b).second.padButton = SDL_GAMEPAD_BUTTON_X;
 #else
-					(*b).second.padButton = SDL_CONTROLLER_BUTTON_Y;
+					(*b).second.padButton = SDL_GAMEPAD_BUTTON_Y;
 #endif
 					(*b).second.type = binding_t::CONTROLLER_BUTTON;
 					return;
 				} else if (strcmp((const char*)(type + 6), "Back") == 0) {
 					(*b).second.padButton = getControllerType() == ControllerType::PlayStation ?
-                        SDL_CONTROLLER_BUTTON_TOUCHPAD : SDL_CONTROLLER_BUTTON_BACK;
+                        SDL_GAMEPAD_BUTTON_TOUCHPAD : SDL_GAMEPAD_BUTTON_BACK;
 					(*b).second.type = binding_t::CONTROLLER_BUTTON;
 					return;
 				} else if (strcmp((const char*)(type + 6), "Start") == 0) {
-					(*b).second.padButton = SDL_CONTROLLER_BUTTON_START;
+					(*b).second.padButton = SDL_GAMEPAD_BUTTON_START;
 					(*b).second.type = binding_t::CONTROLLER_BUTTON;
 					return;
 				} else if (strcmp((const char*)(type + 6), "LeftStick") == 0) {
-					(*b).second.padButton = SDL_CONTROLLER_BUTTON_LEFTSTICK;
+					(*b).second.padButton = SDL_GAMEPAD_BUTTON_LEFT_STICK;
 					(*b).second.type = binding_t::CONTROLLER_BUTTON;
 					return;
 				} else if (strcmp((const char*)(type + 6), "RightStick") == 0) {
-					(*b).second.padButton = SDL_CONTROLLER_BUTTON_RIGHTSTICK;
+					(*b).second.padButton = SDL_GAMEPAD_BUTTON_RIGHT_STICK;
 					(*b).second.type = binding_t::CONTROLLER_BUTTON;
 					return;
 				} else if (strcmp((const char*)(type + 6), "LeftBumper") == 0) {
-					(*b).second.padButton = SDL_CONTROLLER_BUTTON_LEFTSHOULDER;
+					(*b).second.padButton = SDL_GAMEPAD_BUTTON_LEFT_SHOULDER;
 					(*b).second.type = binding_t::CONTROLLER_BUTTON;
 					return;
 				} else if (strcmp((const char*)(type + 6), "RightBumper") == 0) {
-					(*b).second.padButton = SDL_CONTROLLER_BUTTON_RIGHTSHOULDER;
+					(*b).second.padButton = SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER;
 					(*b).second.type = binding_t::CONTROLLER_BUTTON;
 					return;
 				} else {
@@ -662,22 +662,22 @@ void Input::bind(const char* binding, const char* input) {
 			} else if (strncmp(type, "StickLeft", 9) == 0) {
 				if (strcmp((const char*)(type + 9), "X-") == 0) {
 					(*b).second.padAxisNegative = true;
-					(*b).second.padAxis = SDL_CONTROLLER_AXIS_LEFTX;
+					(*b).second.padAxis = SDL_GAMEPAD_AXIS_LEFTX;
 					(*b).second.type = binding_t::CONTROLLER_AXIS;
 					return;
 				} else if (strcmp((const char*)(type + 9), "X+") == 0) {
 					(*b).second.padAxisNegative = false;
-					(*b).second.padAxis = SDL_CONTROLLER_AXIS_LEFTX;
+					(*b).second.padAxis = SDL_GAMEPAD_AXIS_LEFTX;
 					(*b).second.type = binding_t::CONTROLLER_AXIS;
 					return;
 				} else if (strcmp((const char*)(type + 9), "Y-") == 0) {
 					(*b).second.padAxisNegative = true;
-					(*b).second.padAxis = SDL_CONTROLLER_AXIS_LEFTY;
+					(*b).second.padAxis = SDL_GAMEPAD_AXIS_LEFTY;
 					(*b).second.type = binding_t::CONTROLLER_AXIS;
 					return;
 				} else if (strcmp((const char*)(type + 9), "Y+") == 0) {
 					(*b).second.padAxisNegative = false;
-					(*b).second.padAxis = SDL_CONTROLLER_AXIS_LEFTY;
+					(*b).second.padAxis = SDL_GAMEPAD_AXIS_LEFTY;
 					(*b).second.type = binding_t::CONTROLLER_AXIS;
 					return;
 				} else {
@@ -687,22 +687,22 @@ void Input::bind(const char* binding, const char* input) {
 			} else if (strncmp(type, "StickRight", 10) == 0) {
 				if (strcmp((const char*)(type + 10), "X-") == 0) {
 					(*b).second.padAxisNegative = true;
-					(*b).second.padAxis = SDL_CONTROLLER_AXIS_RIGHTX;
+					(*b).second.padAxis = SDL_GAMEPAD_AXIS_RIGHTX;
 					(*b).second.type = binding_t::CONTROLLER_AXIS;
 					return;
 				} else if (strcmp((const char*)(type + 10), "X+") == 0) {
 					(*b).second.padAxisNegative = false;
-					(*b).second.padAxis = SDL_CONTROLLER_AXIS_RIGHTX;
+					(*b).second.padAxis = SDL_GAMEPAD_AXIS_RIGHTX;
 					(*b).second.type = binding_t::CONTROLLER_AXIS;
 					return;
 				} else if (strcmp((const char*)(type + 10), "Y-") == 0) {
 					(*b).second.padAxisNegative = true;
-					(*b).second.padAxis = SDL_CONTROLLER_AXIS_RIGHTY;
+					(*b).second.padAxis = SDL_GAMEPAD_AXIS_RIGHTY;
 					(*b).second.type = binding_t::CONTROLLER_AXIS;
 					return;
 				} else if (strcmp((const char*)(type + 10), "Y+") == 0) {
 					(*b).second.padAxisNegative = false;
-					(*b).second.padAxis = SDL_CONTROLLER_AXIS_RIGHTY;
+					(*b).second.padAxis = SDL_GAMEPAD_AXIS_RIGHTY;
 					(*b).second.type = binding_t::CONTROLLER_AXIS;
 					return;
 				} else {
@@ -711,19 +711,19 @@ void Input::bind(const char* binding, const char* input) {
 				}
 			} else if (strncmp(type, "Dpad", 4) == 0) {
 				if (strcmp((const char*)(type + 4), "X-") == 0) {
-					(*b).second.padButton = SDL_CONTROLLER_BUTTON_DPAD_LEFT;
+					(*b).second.padButton = SDL_GAMEPAD_BUTTON_DPAD_LEFT;
 					(*b).second.type = binding_t::CONTROLLER_BUTTON;
 					return;
 				} else if (strcmp((const char*)(type + 4), "X+") == 0) {
-					(*b).second.padButton = SDL_CONTROLLER_BUTTON_DPAD_RIGHT;
+					(*b).second.padButton = SDL_GAMEPAD_BUTTON_DPAD_RIGHT;
 					(*b).second.type = binding_t::CONTROLLER_BUTTON;
 					return;
 				} else if (strcmp((const char*)(type + 4), "Y-") == 0) {
-					(*b).second.padButton = SDL_CONTROLLER_BUTTON_DPAD_UP;
+					(*b).second.padButton = SDL_GAMEPAD_BUTTON_DPAD_UP;
 					(*b).second.type = binding_t::CONTROLLER_BUTTON;
 					return;
 				} else if (strcmp((const char*)(type + 4), "Y+") == 0) {
-					(*b).second.padButton = SDL_CONTROLLER_BUTTON_DPAD_DOWN;
+					(*b).second.padButton = SDL_GAMEPAD_BUTTON_DPAD_DOWN;
 					(*b).second.type = binding_t::CONTROLLER_BUTTON;
 					return;
 				} else {
@@ -732,12 +732,12 @@ void Input::bind(const char* binding, const char* input) {
 				}
 			} else if (strncmp(type, "LeftTrigger", 11) == 0) {
 				(*b).second.padAxisNegative = false;
-				(*b).second.padAxis = SDL_CONTROLLER_AXIS_TRIGGERLEFT;
+				(*b).second.padAxis = SDL_GAMEPAD_AXIS_LEFT_TRIGGER;
 				(*b).second.type = binding_t::CONTROLLER_AXIS;
 				return;
 			} else if (strncmp(type, "RightTrigger", 12) == 0) {
 				(*b).second.padAxisNegative = false;
-				(*b).second.padAxis = SDL_CONTROLLER_AXIS_TRIGGERRIGHT;
+				(*b).second.padAxis = SDL_GAMEPAD_AXIS_RIGHT_TRIGGER;
 				(*b).second.type = binding_t::CONTROLLER_AXIS;
 				return;
 			} else {
@@ -866,33 +866,33 @@ bool Input::binaryOf(binding_t& binding) {
 #ifdef NINTENDO
 		if (binding.type == binding_t::CONTROLLER_BUTTON) {
 			switch (binding.padButton) {
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_A: return nxGetControllerState(binding.padIndex, nxInput::ButtonB) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_B: return nxGetControllerState(binding.padIndex, nxInput::ButtonA) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_X: return nxGetControllerState(binding.padIndex, nxInput::ButtonY) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_Y: return nxGetControllerState(binding.padIndex, nxInput::ButtonX) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_UP: return nxGetControllerState(binding.padIndex, nxInput::ButtonUp) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT: return nxGetControllerState(binding.padIndex, nxInput::ButtonRight) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_DOWN: return nxGetControllerState(binding.padIndex, nxInput::ButtonDown) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT: return nxGetControllerState(binding.padIndex, nxInput::ButtonLeft) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_START: return nxGetControllerState(binding.padIndex, nxInput::ButtonPlus) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_BACK: return nxGetControllerState(binding.padIndex, nxInput::ButtonMinus) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSTICK: return nxGetControllerState(binding.padIndex, nxInput::LeftStickClick) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSTICK: return nxGetControllerState(binding.padIndex, nxInput::RightStickClick) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER: return nxGetControllerState(binding.padIndex, nxInput::ButtonL) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: return nxGetControllerState(binding.padIndex, nxInput::ButtonR) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_A: return nxGetControllerState(binding.padIndex, nxInput::ButtonB) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_B: return nxGetControllerState(binding.padIndex, nxInput::ButtonA) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_X: return nxGetControllerState(binding.padIndex, nxInput::ButtonY) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_Y: return nxGetControllerState(binding.padIndex, nxInput::ButtonX) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_UP: return nxGetControllerState(binding.padIndex, nxInput::ButtonUp) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_RIGHT: return nxGetControllerState(binding.padIndex, nxInput::ButtonRight) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_DOWN: return nxGetControllerState(binding.padIndex, nxInput::ButtonDown) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_LEFT: return nxGetControllerState(binding.padIndex, nxInput::ButtonLeft) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_START: return nxGetControllerState(binding.padIndex, nxInput::ButtonPlus) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_BACK: return nxGetControllerState(binding.padIndex, nxInput::ButtonMinus) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_LEFT_STICK: return nxGetControllerState(binding.padIndex, nxInput::LeftStickClick) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_RIGHT_STICK: return nxGetControllerState(binding.padIndex, nxInput::RightStickClick) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_LEFT_SHOULDER: return nxGetControllerState(binding.padIndex, nxInput::ButtonL) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER: return nxGetControllerState(binding.padIndex, nxInput::ButtonR) == 1;
 			default: return false;
 			}
 		}
 		else {
 			if (binding.padAxisNegative) {
 				switch (binding.padAxis) {
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFTX:
 					return nxGetControllerState(binding.padIndex, nxInput::LeftStickX) < (INT16_MIN / 2);
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFTY:
 					return nxGetControllerState(binding.padIndex, nxInput::LeftStickY) < (INT16_MIN / 2);
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHTX:
 					return nxGetControllerState(binding.padIndex, nxInput::RightStickX) < (INT16_MIN / 2);
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHTY:
 					return nxGetControllerState(binding.padIndex, nxInput::RightStickY) < (INT16_MIN / 2);
 				default:
 					return false;
@@ -900,17 +900,17 @@ bool Input::binaryOf(binding_t& binding) {
 			}
 			else {
 				switch (binding.padAxis) {
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFTX:
 					return nxGetControllerState(binding.padIndex, nxInput::LeftStickX) > (INT16_MAX / 2);
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFTY:
 					return nxGetControllerState(binding.padIndex, nxInput::LeftStickY) > (INT16_MAX / 2);
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHTX:
 					return nxGetControllerState(binding.padIndex, nxInput::RightStickX) > (INT16_MAX / 2);
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHTY:
 					return nxGetControllerState(binding.padIndex, nxInput::RightStickY) > (INT16_MAX / 2);
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERLEFT:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
 					return nxGetControllerState(binding.padIndex, nxInput::ButtonZL) == 1;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERRIGHT:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
 					return nxGetControllerState(binding.padIndex, nxInput::ButtonZR) == 1;
 				default:
 					return false;
@@ -918,14 +918,14 @@ bool Input::binaryOf(binding_t& binding) {
 			}
 		}
 #else
-		SDL_GameController* pad = binding.pad;
+		SDL_Gamepad* pad = binding.pad;
 		if (binding.type == binding_t::CONTROLLER_BUTTON) {
-			return SDL_GameControllerGetButton(pad, binding.padButton) == 1;
+			return SDL_GetGamepadButton(pad, binding.padButton) == 1;
 		} else {
 			if (binding.padAxisNegative) {
-				return SDL_GameControllerGetAxis(pad, binding.padAxis) < -16384;
+				return SDL_GetGamepadAxis(pad, binding.padAxis) < -16384;
 			} else {
-				return SDL_GameControllerGetAxis(pad, binding.padAxis) > 16384;
+				return SDL_GetGamepadAxis(pad, binding.padAxis) > 16384;
 			}
 		}
 #endif
@@ -935,15 +935,15 @@ bool Input::binaryOf(binding_t& binding) {
 		binding.type == binding_t::JOYSTICK_HAT) {
 		SDL_Joystick* joystick = binding.joystick;
 		if (binding.type == binding_t::JOYSTICK_BUTTON) {
-			return SDL_JoystickGetButton(joystick, binding.joystickButton) == 1;
+			return SDL_GetJoystickButton(joystick, binding.joystickButton) == 1;
 		} else if (binding.type == binding_t::JOYSTICK_AXIS) {
 			if (binding.joystickAxisNegative) {
-				return SDL_JoystickGetAxis(joystick, binding.joystickAxis) < -16384;
+				return SDL_GetJoystickAxis(joystick, binding.joystickAxis) < -16384;
 			} else {
-				return SDL_JoystickGetAxis(joystick, binding.joystickAxis) > 16384;
+				return SDL_GetJoystickAxis(joystick, binding.joystickAxis) > 16384;
 			}
 		} else {
-			return SDL_JoystickGetHat(joystick, binding.joystickHat) == binding.joystickHatState;
+			return SDL_GetJoystickHat(joystick, binding.joystickHat) == binding.joystickHatState;
 		}
 	} else if (binding.type == binding_t::MOUSE_BUTTON) {
 		return mouseButtons[binding.mouseButton];
@@ -963,20 +963,20 @@ float Input::analogOf(binding_t& binding) {
 #ifdef NINTENDO
 		if (binding.type == binding_t::CONTROLLER_BUTTON) {
 			switch (binding.padButton) {
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_A: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonB);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_B: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonA);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_X: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonY);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_Y: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonX);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_UP: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonUp);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonRight);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_DOWN: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonDown);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonLeft);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_START: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonPlus);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_BACK: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonMinus);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSTICK: return (float)nxGetControllerState(binding.padIndex, nxInput::LeftStickClick);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSTICK: return (float)nxGetControllerState(binding.padIndex, nxInput::RightStickClick);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonL);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonR);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_A: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonB);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_B: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonA);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_X: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonY);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_Y: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonX);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_UP: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonUp);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_RIGHT: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonRight);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_DOWN: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonDown);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_LEFT: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonLeft);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_START: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonPlus);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_BACK: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonMinus);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_LEFT_STICK: return (float)nxGetControllerState(binding.padIndex, nxInput::LeftStickClick);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_RIGHT_STICK: return (float)nxGetControllerState(binding.padIndex, nxInput::RightStickClick);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_LEFT_SHOULDER: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonL);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER: return (float)nxGetControllerState(binding.padIndex, nxInput::ButtonR);
 			default: return 0.f;
 			}
 		}
@@ -984,44 +984,44 @@ float Input::analogOf(binding_t& binding) {
 			float result = 0.f;
 			if (binding.padAxisNegative) {
 				switch (binding.padAxis) {
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFTX:
 					result = std::max((float)nxGetControllerState(binding.padIndex, nxInput::LeftStickX) / INT16_MIN, 0.f); break;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFTY:
 					result = std::max((float)nxGetControllerState(binding.padIndex, nxInput::LeftStickY) / INT16_MIN, 0.f); break;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHTX:
 					result = std::max((float)nxGetControllerState(binding.padIndex, nxInput::RightStickX) / INT16_MIN, 0.f); break;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHTY:
 					result = std::max((float)nxGetControllerState(binding.padIndex, nxInput::RightStickY) / INT16_MIN, 0.f); break;
 				}
 			}
 			else {
 				switch (binding.padAxis) {
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFTX:
 					result = std::max((float)nxGetControllerState(binding.padIndex, nxInput::LeftStickX) / INT16_MAX, 0.f); break;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFTY:
 					result = std::max((float)nxGetControllerState(binding.padIndex, nxInput::LeftStickY) / INT16_MAX, 0.f); break;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHTX:
 					result = std::max((float)nxGetControllerState(binding.padIndex, nxInput::RightStickX) / INT16_MAX, 0.f); break;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHTY:
 					result = std::max((float)nxGetControllerState(binding.padIndex, nxInput::RightStickY) / INT16_MAX, 0.f); break;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERLEFT:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
 					result = nxGetControllerState(binding.padIndex, nxInput::ButtonZL); break;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERRIGHT:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
 					result = nxGetControllerState(binding.padIndex, nxInput::ButtonZR); break;
 				}
 			}
 			return (fabs(result) > deadzone) ? result : 0.f;
 		}
 #else
-		SDL_GameController* pad = binding.pad;
+		SDL_Gamepad* pad = binding.pad;
 		if (binding.type == binding_t::CONTROLLER_BUTTON) {
-			return SDL_GameControllerGetButton(pad, binding.padButton) ? 1.f : 0.f;
+			return SDL_GetGamepadButton(pad, binding.padButton) ? 1.f : 0.f;
 		} else {
 			if (binding.padAxisNegative) {
-				float result = std::min(SDL_GameControllerGetAxis(pad, binding.padAxis) / 32768.f, 0.f) * -1.f;
+				float result = std::min(SDL_GetGamepadAxis(pad, binding.padAxis) / 32768.f, 0.f) * -1.f;
 				return (fabs(result) > deadzone) ? result : 0.f;
 			} else {
-				float result = std::max(SDL_GameControllerGetAxis(pad, binding.padAxis) / 32767.f, 0.f);
+				float result = std::max(SDL_GetGamepadAxis(pad, binding.padAxis) / 32767.f, 0.f);
 				return (fabs(result) > deadzone) ? result : 0.f;
 			}
 		}
@@ -1032,17 +1032,17 @@ float Input::analogOf(binding_t& binding) {
 		binding.type == binding_t::JOYSTICK_HAT) {
 		SDL_Joystick* joystick = binding.joystick;
 		if (binding.type == binding_t::JOYSTICK_BUTTON) {
-			return SDL_JoystickGetButton(joystick, binding.joystickButton) ? 1.f : 0.f;
+			return SDL_GetJoystickButton(joystick, binding.joystickButton) ? 1.f : 0.f;
 		} else if (binding.type == binding_t::JOYSTICK_AXIS) {
 			if (binding.joystickAxisNegative) {
-				float result = std::min(SDL_JoystickGetAxis(joystick, binding.joystickAxis) / 32768.f, 0.f) * -1.f;
+				float result = std::min(SDL_GetJoystickAxis(joystick, binding.joystickAxis) / 32768.f, 0.f) * -1.f;
 				return (fabs(result) > deadzone) ? result : 0.f;
 			} else {
-				float result = std::max(SDL_JoystickGetAxis(joystick, binding.joystickAxis) / 32767.f, 0.f);
+				float result = std::max(SDL_GetJoystickAxis(joystick, binding.joystickAxis) / 32767.f, 0.f);
 				return (fabs(result) > deadzone) ? result : 0.f;
 			}
 		} else {
-			return SDL_JoystickGetHat(joystick, binding.joystickHat) == binding.joystickHatState ? 1.f : 0.f;
+			return SDL_GetJoystickHat(joystick, binding.joystickHat) == binding.joystickHatState ? 1.f : 0.f;
 		}
 	} else if (binding.type == binding_t::MOUSE_BUTTON) {
 		return mouseButtons[binding.mouseButton] ? 1.f : 0.f;

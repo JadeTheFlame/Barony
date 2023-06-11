@@ -52,12 +52,12 @@ extern bool gamepad_menuy_invert;
 
 //Game Controller 1 handler
 //TODO: Joystick support?
-//extern SDL_GameController* game_controller;
+//extern SDL_Gamepad* game_controller;
 
 class GameController
 {
 	friend class Input;
-	SDL_GameController* sdl_device;
+	SDL_Gamepad* sdl_device;
 	SDL_Haptic* sdl_haptic;
 	int id;
 	std::string name;
@@ -156,8 +156,8 @@ public:
 		};
 		Bindtype_t type = INVALID;
 
-		SDL_GameControllerAxis padAxis = SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_INVALID;
-		SDL_GameControllerButton padButton = SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_INVALID;
+		SDL_GamepadAxis padAxis = SDL_GamepadAxis::SDL_GAMEPAD_AXIS_INVALID;
+		SDL_GamepadButton padButton = SDL_GamepadButton::SDL_GAMEPAD_BUTTON_INVALID;
 		DpadDirection padVirtualDpad = DpadDirection::CENTERED;
 		RadialSelection padRadialSelection = RadialSelection::RADIAL_CENTERED;
 		bool padAxisNegative = false;
@@ -166,26 +166,26 @@ public:
 	void updateButtons();
 	void updateButtonsReleased();
 	void updateAxis();
-	static SDL_GameControllerButton getSDLButtonFromImpulse(const unsigned controllerImpulse);
-	static SDL_GameControllerAxis getSDLTriggerFromImpulse(const unsigned controllerImpulse);
+	static SDL_GamepadButton getSDLButtonFromImpulse(const unsigned controllerImpulse);
+	static SDL_GamepadAxis getSDLTriggerFromImpulse(const unsigned controllerImpulse);
 
 	Binding_t buttons[NUM_JOY_STATUS];
 	Binding_t axis[NUM_JOY_AXIS_STATUS];
 	Binding_t virtualDpad;
 	Binding_t radialSelection;
 
-	bool binary(SDL_GameControllerButton binding) const;
-	bool binaryToggle(SDL_GameControllerButton binding) const;
-	bool binaryReleaseToggle(SDL_GameControllerButton binding) const;
-	void consumeBinaryToggle(SDL_GameControllerButton binding);
-	void consumeBinaryReleaseToggle(SDL_GameControllerButton binding);
-	bool buttonHeldToggle(SDL_GameControllerButton binding) const;
-	float analog(SDL_GameControllerButton binding) const;
-	bool binary(SDL_GameControllerAxis binding) const;
-	bool binaryToggle(SDL_GameControllerAxis binding) const;
-	void consumeBinaryToggle(SDL_GameControllerAxis binding);
-	bool buttonHeldToggle(SDL_GameControllerAxis binding) const;
-	float analog(SDL_GameControllerAxis binding) const;
+	bool binary(SDL_GamepadButton binding) const;
+	bool binaryToggle(SDL_GamepadButton binding) const;
+	bool binaryReleaseToggle(SDL_GamepadButton binding) const;
+	void consumeBinaryToggle(SDL_GamepadButton binding);
+	void consumeBinaryReleaseToggle(SDL_GamepadButton binding);
+	bool buttonHeldToggle(SDL_GamepadButton binding) const;
+	float analog(SDL_GamepadButton binding) const;
+	bool binary(SDL_GamepadAxis binding) const;
+	bool binaryToggle(SDL_GamepadAxis binding) const;
+	void consumeBinaryToggle(SDL_GamepadAxis binding);
+	bool buttonHeldToggle(SDL_GamepadAxis binding) const;
+	float analog(SDL_GamepadAxis binding) const;
 	DpadDirection dpadDir() const;
 	DpadDirection dpadDirToggle() const;
 	void consumeDpadDirToggle();
@@ -206,7 +206,7 @@ public:
 
 	void initBindings();
 	const int getID() { return id; }
-	SDL_GameController* getControllerDevice() const { return sdl_device; }
+	SDL_Gamepad* getControllerDevice() const { return sdl_device; }
 	SDL_Haptic* getHaptic() { return sdl_haptic; }
 	const bool isActive();
 	void addRumble(Haptic_t::RumblePattern pattern, Uint16 smallMagnitude, Uint16 largeMagnitude, Uint32 length, Uint32 srcEntityUid);
@@ -1816,7 +1816,7 @@ public:
 				}
 				if ( itemWorldTooltipSurface )
 				{
-					SDL_FreeSurface(itemWorldTooltipSurface);
+					SDL_DestroySurface(itemWorldTooltipSurface);
 					itemWorldTooltipSurface = nullptr;
 				}
 			};
@@ -1890,7 +1890,7 @@ public:
 					}
 					if ( dialogueTooltipSurface )
 					{
-						SDL_FreeSurface(dialogueTooltipSurface);
+						SDL_DestroySurface(dialogueTooltipSurface);
 						dialogueTooltipSurface = nullptr;
 					}
 				};

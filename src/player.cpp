@@ -91,7 +91,7 @@ void GameController::close()
 
 	if (sdl_device)
 	{
-		SDL_GameControllerClose(sdl_device);
+		SDL_CloseGamepad(sdl_device);
 		sdl_device = nullptr;
 	}
 	id = -1;
@@ -101,7 +101,7 @@ void GameController::close()
 
 void GameController::reinitHaptic()
 {
-	return; // using SDL_GameControllerRumble instead..
+	return; // using SDL_RumbleGamepad instead..
 	if ( !sdl_device )
 	{
 		return;
@@ -115,7 +115,7 @@ void GameController::reinitHaptic()
 	}
 
 	printlog("[INPUTS]: Reinit haptics on device: %d", getID());
-	SDL_Joystick* joystick = SDL_GameControllerGetJoystick(sdl_device);
+	SDL_Joystick* joystick = SDL_GetGamepadJoystick(sdl_device);
 	sdl_haptic = SDL_HapticOpenFromJoystick(joystick);
 	if ( sdl_haptic == nullptr )
 	{
@@ -147,12 +147,12 @@ bool GameController::open(int sdl_which, int index)
 		return false;
 	}
 
-	if (!SDL_IsGameController(sdl_which))
+	if (!SDL_IsGamepad(sdl_which))
 	{
 		return false;
 	}
 
-	sdl_device = SDL_GameControllerOpen(sdl_which);
+	sdl_device = SDL_OpenGamepad(sdl_which);
 
 	if (sdl_device == nullptr)
 	{
@@ -167,7 +167,7 @@ bool GameController::open(int sdl_which, int index)
 #ifdef DISABLE_RUMBLE
 		haptics.vibrationEnabled = false;
 #else
-		if ( SDL_GameControllerHasRumble(sdl_device) == SDL_FALSE )
+		if ( SDL_GamepadHasRumble(sdl_device) == SDL_FALSE )
 		{
 			printlog("Notice: Controller does not support rumble!");
 			haptics.vibrationEnabled = false;
@@ -178,7 +178,7 @@ bool GameController::open(int sdl_which, int index)
 			haptics.vibrationEnabled = true;
 		}
 #endif
-		/*SDL_Joystick* joystick = SDL_GameControllerGetJoystick(sdl_device);
+		/*SDL_Joystick* joystick = SDL_GetGamepadJoystick(sdl_device);
 		sdl_haptic = SDL_HapticOpenFromJoystick(joystick);
 		if ( sdl_haptic == nullptr )
 		{
@@ -201,20 +201,20 @@ bool GameController::open(int sdl_which, int index)
 
 void GameController::initBindings() 
 {
-	for ( int i = SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_A; i < SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_MAX; ++i )
+	for ( int i = SDL_GamepadButton::SDL_GAMEPAD_BUTTON_A; i < SDL_GamepadButton::SDL_GAMEPAD_BUTTON_MAX; ++i )
 	{
 		this->buttons[i].type = Binding_t::Bindtype_t::CONTROLLER_BUTTON;
-		this->buttons[i].padButton = static_cast<SDL_GameControllerButton>(i);
+		this->buttons[i].padButton = static_cast<SDL_GamepadButton>(i);
 		this->buttons[i].analog = 0.f;
 		this->buttons[i].binary = false;
 		this->buttons[i].binaryRelease = false;
 		this->buttons[i].binaryReleaseConsumed = false;
 		this->buttons[i].consumed = false;
 	}
-	for ( int i = SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX; i < SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_MAX; ++i )
+	for ( int i = SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFTX; i < SDL_GamepadAxis::SDL_GAMEPAD_AXIS_MAX; ++i )
 	{
 		this->axis[i].type = Binding_t::Bindtype_t::CONTROLLER_AXIS;
-		this->axis[i].padAxis = static_cast<SDL_GameControllerAxis>(i);
+		this->axis[i].padAxis = static_cast<SDL_GamepadAxis>(i);
 		this->axis[i].analog = 0.f;
 		this->axis[i].binary = false;
 		this->axis[i].binaryRelease = false;
@@ -491,8 +491,8 @@ void GameController::handleAnalog(int player)
 			oldAxisRightY = getRawRightYMove();
 		}
 
-		//real_t x = SDL_GameControllerGetAxis(sdl_device, SDL_CONTROLLER_AXIS_RIGHTX);
-		//real_t y = SDL_GameControllerGetAxis(sdl_device, SDL_CONTROLLER_AXIS_RIGHTY);
+		//real_t x = SDL_GetGamepadAxis(sdl_device, SDL_GAMEPAD_AXIS_RIGHTX);
+		//real_t y = SDL_GetGamepadAxis(sdl_device, SDL_GAMEPAD_AXIS_RIGHTY);
 	
 		if ( rightx || righty )
 		{
@@ -502,7 +502,7 @@ void GameController::handleAnalog(int player)
 			if ( inputs.bPlayerUsingKeyboardControl(player) )
 			{
 				SDL_Event e;
-				e.type = SDL_MOUSEMOTION;
+				e.type = SDL_EVENT_MOUSE_MOTION;
 				e.motion.x = mousex + rightx;
 				e.motion.y = mousey + righty;
 				e.motion.xrel = rightx;
@@ -577,7 +577,7 @@ int GameController::getRawLeftXMove() // no sensitivity
 #ifdef NINTENDO
 	int x = nxGetControllerState(id, nxInput::LeftStickX);
 #else
-	int x = SDL_GameControllerGetAxis(sdl_device, SDL_CONTROLLER_AXIS_LEFTX);
+	int x = SDL_GetGamepadAxis(sdl_device, SDL_GAMEPAD_AXIS_LEFTX);
 #endif
 	if ( leftStickDeadzoneType == DEADZONE_PER_AXIS )
 	{
@@ -606,7 +606,7 @@ int GameController::getRawLeftYMove() // no sensitivity
 #ifdef NINTENDO
 	int y = nxGetControllerState(id, nxInput::LeftStickY);
 #else
-	int y = SDL_GameControllerGetAxis(sdl_device, SDL_CONTROLLER_AXIS_LEFTY);
+	int y = SDL_GetGamepadAxis(sdl_device, SDL_GAMEPAD_AXIS_LEFTY);
 #endif
 	if ( leftStickDeadzoneType == DEADZONE_PER_AXIS )
 	{
@@ -635,7 +635,7 @@ int GameController::getRawRightXMove() // no sensitivity
 #ifdef NINTENDO
 	int x = nxGetControllerState(id, nxInput::RightStickX);
 #else
-	int x = SDL_GameControllerGetAxis(sdl_device, SDL_CONTROLLER_AXIS_RIGHTX);
+	int x = SDL_GetGamepadAxis(sdl_device, SDL_GAMEPAD_AXIS_RIGHTX);
 #endif
 	if ( rightStickDeadzoneType == DEADZONE_PER_AXIS )
 	{
@@ -664,7 +664,7 @@ int GameController::getRawRightYMove() // no sensitivity
 #ifdef NINTENDO
 	int y = nxGetControllerState(id, nxInput::RightStickY);
 #else
-	int y = SDL_GameControllerGetAxis(sdl_device, SDL_CONTROLLER_AXIS_RIGHTY);
+	int y = SDL_GetGamepadAxis(sdl_device, SDL_GAMEPAD_AXIS_RIGHTY);
 #endif
 	if ( rightStickDeadzoneType == DEADZONE_PER_AXIS )
 	{
@@ -693,7 +693,7 @@ int GameController::getRawLeftTrigger()
 #ifdef NINTENDO
 	int n = nxGetControllerState(id, nxInput::ButtonZL) * INT16_MAX;
 #else
-	int n = SDL_GameControllerGetAxis(sdl_device, SDL_CONTROLLER_AXIS_TRIGGERLEFT);
+	int n = SDL_GetGamepadAxis(sdl_device, SDL_GAMEPAD_AXIS_LEFT_TRIGGER);
 #endif
 	if (n < gamepad_trigger_deadzone)
 	{
@@ -712,7 +712,7 @@ int GameController::getRawRightTrigger()
 #ifdef NINTENDO
 	int n = nxGetControllerState(id, nxInput::ButtonZR) * INT16_MAX;
 #else
-	int n = SDL_GameControllerGetAxis(sdl_device, SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
+	int n = SDL_GetGamepadAxis(sdl_device, SDL_GAMEPAD_AXIS_RIGHT_TRIGGER);
 #endif
 	if (n < gamepad_trigger_deadzone)
 	{
@@ -2511,34 +2511,34 @@ void initGameControllers()
 	}
 }
 
-SDL_GameControllerButton GameController::getSDLButtonFromImpulse(const unsigned controllerImpulse)
+SDL_GamepadButton GameController::getSDLButtonFromImpulse(const unsigned controllerImpulse)
 {
 	if ( controllerImpulse >= NUM_JOY_IMPULSES )
 	{
-		return SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_INVALID;
+		return SDL_GamepadButton::SDL_GAMEPAD_BUTTON_INVALID;
 	}
 
 	if ( joyimpulses[controllerImpulse] < 0 || joyimpulses[controllerImpulse] == SCANCODE_UNASSIGNED_BINDING )
 	{
-		return SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_INVALID;
+		return SDL_GamepadButton::SDL_GAMEPAD_BUTTON_INVALID;
 	}
 
-	return static_cast<SDL_GameControllerButton>(joyimpulses[controllerImpulse] - 301);
+	return static_cast<SDL_GamepadButton>(joyimpulses[controllerImpulse] - 301);
 }
 
-SDL_GameControllerAxis GameController::getSDLTriggerFromImpulse(const unsigned controllerImpulse)
+SDL_GamepadAxis GameController::getSDLTriggerFromImpulse(const unsigned controllerImpulse)
 {
 	if ( controllerImpulse >= NUM_JOY_IMPULSES )
 	{
-		return SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_INVALID;
+		return SDL_GamepadAxis::SDL_GAMEPAD_AXIS_INVALID;
 	}
 
 	if ( joyimpulses[controllerImpulse] == 299 || joyimpulses[controllerImpulse] == 300 )
 	{
-		return static_cast<SDL_GameControllerAxis>(joyimpulses[controllerImpulse] - 299 + SDL_CONTROLLER_AXIS_TRIGGERLEFT);
+		return static_cast<SDL_GamepadAxis>(joyimpulses[controllerImpulse] - 299 + SDL_GAMEPAD_AXIS_LEFT_TRIGGER);
 	}
 
-	return SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_INVALID;
+	return SDL_GamepadAxis::SDL_GAMEPAD_AXIS_INVALID;
 }
 
 GameController::Haptic_t::Haptic_t()
@@ -2852,7 +2852,7 @@ SDL_HapticEffect* GameController::doRumble(Haptic_t::Rumble* r)
 	}
 	else if (sdl_device)
 	{
-		SDL_GameControllerRumble(sdl_device, haptics.hapticEffect.leftright.large_magnitude * 2, haptics.hapticEffect.leftright.small_magnitude * 2, haptics.hapticEffect.leftright.length);
+		SDL_RumbleGamepad(sdl_device, haptics.hapticEffect.leftright.large_magnitude * 2, haptics.hapticEffect.leftright.small_magnitude * 2, haptics.hapticEffect.leftright.length);
 	}
 #endif
 	return nullptr;
@@ -5250,7 +5250,7 @@ GameController* Inputs::getController(int player) const
 
 const bool Inputs::bControllerRawInputPressed(int player, const unsigned button) const
 {
-	if ( button < 299 || button >= (301 + SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_MAX) )
+	if ( button < 299 || button >= (301 + SDL_GamepadButton::SDL_GAMEPAD_BUTTON_MAX) )
 	{
 		return false;
 	}
@@ -5262,17 +5262,17 @@ const bool Inputs::bControllerRawInputPressed(int player, const unsigned button)
 
 	if ( button == 299 || button == 300 ) // triggers
 	{
-		return controller->binaryToggle(static_cast<SDL_GameControllerAxis>(button - 299 + SDL_CONTROLLER_AXIS_TRIGGERLEFT));
+		return controller->binaryToggle(static_cast<SDL_GamepadAxis>(button - 299 + SDL_GAMEPAD_AXIS_LEFT_TRIGGER));
 	}
 	else
 	{
-		return controller->binaryToggle(static_cast<SDL_GameControllerButton>(button - 301));
+		return controller->binaryToggle(static_cast<SDL_GamepadButton>(button - 301));
 	}
 }
 
 const bool Inputs::bControllerRawInputReleased(int player, const unsigned button) const
 {
-	if ( button < 299 || button >= (301 + SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_MAX) )
+	if ( button < 299 || button >= (301 + SDL_GamepadButton::SDL_GAMEPAD_BUTTON_MAX) )
 	{
 		return false;
 	}
@@ -5285,11 +5285,11 @@ const bool Inputs::bControllerRawInputReleased(int player, const unsigned button
 	if ( button == 299 || button == 300 ) // triggers
 	{
 		return false;
-		//return controller->binaryReleaseToggle(static_cast<SDL_GameControllerAxis>(button - 299 + SDL_CONTROLLER_AXIS_TRIGGERLEFT));
+		//return controller->binaryReleaseToggle(static_cast<SDL_GamepadAxis>(button - 299 + SDL_GAMEPAD_AXIS_LEFT_TRIGGER));
 	}
 	else
 	{
-		return controller->binaryReleaseToggle(static_cast<SDL_GameControllerButton>(button - 301));
+		return controller->binaryReleaseToggle(static_cast<SDL_GamepadButton>(button - 301));
 	}
 }
 
@@ -5317,8 +5317,8 @@ const bool Inputs::bControllerInputPressed(int player, const unsigned controller
 	{
 		if ( players[player]->hotbar.faceMenuButtonHeld )
 		{
-			if ( GameController::getSDLButtonFromImpulse(controllerImpulse) == SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER
-				|| GameController::getSDLButtonFromImpulse(controllerImpulse) == SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER )
+			if ( GameController::getSDLButtonFromImpulse(controllerImpulse) == SDL_GamepadButton::SDL_GAMEPAD_BUTTON_LEFT_SHOULDER
+				|| GameController::getSDLButtonFromImpulse(controllerImpulse) == SDL_GamepadButton::SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER )
 			{
 				return false;
 			}
@@ -5446,7 +5446,7 @@ const void Inputs::mouseClearRight(int player)
 
 void Inputs::controllerClearRawInput(int player, const unsigned button)
 {
-	if ( button < 299 || button >= (301 + SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_MAX) )
+	if ( button < 299 || button >= (301 + SDL_GamepadButton::SDL_GAMEPAD_BUTTON_MAX) )
 	{
 		return;
 	}
@@ -5462,17 +5462,17 @@ void Inputs::controllerClearRawInput(int player, const unsigned button)
 
 	if ( button == 299 || button == 300 ) // triggers
 	{
-		controller->consumeBinaryToggle(static_cast<SDL_GameControllerAxis>(button - 299 + SDL_CONTROLLER_AXIS_TRIGGERLEFT));
+		controller->consumeBinaryToggle(static_cast<SDL_GamepadAxis>(button - 299 + SDL_GAMEPAD_AXIS_LEFT_TRIGGER));
 	}
 	else
 	{
-		controller->consumeBinaryToggle(static_cast<SDL_GameControllerButton>(button - 301));
+		controller->consumeBinaryToggle(static_cast<SDL_GamepadButton>(button - 301));
 	}
 }
 
 void Inputs::controllerClearRawInputRelease(int player, const unsigned button)
 {
-	if ( button < 299 || button >= (301 + SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_MAX) )
+	if ( button < 299 || button >= (301 + SDL_GamepadButton::SDL_GAMEPAD_BUTTON_MAX) )
 	{
 		return;
 	}
@@ -5488,11 +5488,11 @@ void Inputs::controllerClearRawInputRelease(int player, const unsigned button)
 
 	if ( button == 299 || button == 300 ) // triggers
 	{
-		//controller->consumeBinaryReleaseToggle(static_cast<SDL_GameControllerAxis>(button - 299 + SDL_CONTROLLER_AXIS_TRIGGERLEFT));
+		//controller->consumeBinaryReleaseToggle(static_cast<SDL_GamepadAxis>(button - 299 + SDL_GAMEPAD_AXIS_LEFT_TRIGGER));
 	}
 	else
 	{
-		controller->consumeBinaryReleaseToggle(static_cast<SDL_GameControllerButton>(button - 301));
+		controller->consumeBinaryReleaseToggle(static_cast<SDL_GamepadButton>(button - 301));
 	}
 }
 
@@ -5587,19 +5587,19 @@ SDL_Rect Inputs::getGlyphRectForInput(const int player, bool pressed, const unsi
 
 	if ( joyimpulses[controllerImpulse] == 299 || joyimpulses[controllerImpulse] == 300 ) // triggers
 	{
-		SDL_GameControllerAxis axis = GameController::getSDLTriggerFromImpulse(controllerImpulse);
-		if ( axis == SDL_CONTROLLER_AXIS_INVALID && controllerImpulse >= 301 )
+		SDL_GamepadAxis axis = GameController::getSDLTriggerFromImpulse(controllerImpulse);
+		if ( axis == SDL_GAMEPAD_AXIS_INVALID && controllerImpulse >= 301 )
 		{
-			axis = static_cast<SDL_GameControllerAxis>(controllerImpulse - 299 + SDL_CONTROLLER_AXIS_TRIGGERLEFT);
+			axis = static_cast<SDL_GamepadAxis>(controllerImpulse - 299 + SDL_GAMEPAD_AXIS_LEFT_TRIGGER);
 		}
 
 		switch ( axis )
 		{
-			case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERLEFT:
+			case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
 				glyphWidth = 13;
 				glyphHeight = 11;
 				return SDL_Rect{ 2 * glyphSpacing, 4 * glyphSpacing, glyphWidth, glyphHeight };
-			case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERRIGHT:
+			case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
 				glyphWidth = 13;
 				glyphHeight = 11;
 				return SDL_Rect{ 3 * glyphSpacing, 4 * glyphSpacing, glyphWidth, glyphHeight };
@@ -5609,69 +5609,69 @@ SDL_Rect Inputs::getGlyphRectForInput(const int player, bool pressed, const unsi
 	}
 	else
 	{
-		SDL_GameControllerButton but = static_cast<SDL_GameControllerButton>(controllerImpulse);
-		/*if ( but == SDL_CONTROLLER_BUTTON_INVALID && controllerImpulse >= 299 )
+		SDL_GamepadButton but = static_cast<SDL_GamepadButton>(controllerImpulse);
+		/*if ( but == SDL_GAMEPAD_BUTTON_INVALID && controllerImpulse >= 299 )
 		{
-			but = static_cast<SDL_GameControllerButton>(controllerImpulse - 301);
+			but = static_cast<SDL_GamepadButton>(controllerImpulse - 301);
 		}*/
 
 		switch ( but )
 		{
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_A:
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_A:
 				glyphWidth = 11;
 				glyphHeight = 12;
 				return SDL_Rect{ 6 * glyphSpacing, (pressed ? 1 : 0) * glyphSpacing, glyphWidth, glyphHeight };
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_B:
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_B:
 				glyphWidth = 11;
 				glyphHeight = 12;
 				return SDL_Rect{ 7 * glyphSpacing, (pressed ? 1 : 0) * glyphSpacing, glyphWidth, glyphHeight };
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_X:
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_X:
 				glyphWidth = 11;
 				glyphHeight = 12;
 				return SDL_Rect{ 5 * glyphSpacing, (pressed ? 1 : 0) * glyphSpacing, glyphWidth, glyphHeight };
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_Y:
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_Y:
 				glyphWidth = 11;
 				glyphHeight = 12;
 				return SDL_Rect{ 4 * glyphSpacing, (pressed ? 1 : 0) * glyphSpacing, glyphWidth, glyphHeight };
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER:
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_LEFT_SHOULDER:
 				glyphWidth = 15;
 				glyphHeight = 7;
 				return SDL_Rect{ 0 * glyphSpacing, (pressed ? 4 : 4) * glyphSpacing, glyphWidth, glyphHeight };
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER:
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER:
 				glyphWidth = 15;
 				glyphHeight = 7;
 				return SDL_Rect{ 1 * glyphSpacing, (pressed ? 4 : 4) * glyphSpacing, glyphWidth, glyphHeight };
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_BACK:
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_BACK:
 				glyphWidth = 15;
 				glyphHeight = 7;
 				return SDL_Rect{ 2 * glyphSpacing, (pressed ? 1 : 1) * glyphSpacing, glyphWidth, glyphHeight };
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_START:
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_START:
 				glyphWidth = 15;
 				glyphHeight = 7;
 				return SDL_Rect{ 3 * glyphSpacing, (pressed ? 1 : 1) * glyphSpacing, glyphWidth, glyphHeight };
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_GUIDE:
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_GUIDE:
 				return defaultRect;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSTICK:
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_LEFT_STICK:
 				glyphWidth = 19;
 				glyphHeight = 19;
 				return SDL_Rect{ 0 * glyphSpacing, (pressed ? 8 : 8) * glyphSpacing, glyphWidth, glyphHeight };
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSTICK:
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_RIGHT_STICK:
 				glyphWidth = 19;
 				glyphHeight = 19;
 				return SDL_Rect{ 0 * glyphSpacing, (pressed ? 8 : 8) * glyphSpacing, glyphWidth, glyphHeight };
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_LEFT:
 				glyphWidth = 10;
 				glyphHeight = 10;
 				return SDL_Rect{ 0 * glyphSpacing, (pressed ? 0 : 0) * glyphSpacing, glyphWidth, glyphHeight };
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_UP:
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_UP:
 				glyphWidth = 10;
 				glyphHeight = 10;
 				return SDL_Rect{ 1 * glyphSpacing, (pressed ? 0 : 0) * glyphSpacing, glyphWidth, glyphHeight };
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_RIGHT:
 				glyphWidth = 10;
 				glyphHeight = 10;
 				return SDL_Rect{ 2 * glyphSpacing, (pressed ? 0 : 0) * glyphSpacing, glyphWidth, glyphHeight };
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_DOWN:
 				glyphWidth = 10;
 				glyphHeight = 10;
 				return SDL_Rect{ 3 * glyphSpacing, (pressed ? 0 : 0) * glyphSpacing, glyphWidth, glyphHeight };
@@ -5691,25 +5691,25 @@ bool GameController::binaryOf(Binding_t& binding)
 		{
 #ifdef NINTENDO
 			switch (binding.padButton) {
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_A: return nxGetControllerState(id, nxInput::ButtonB) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_B: return nxGetControllerState(id, nxInput::ButtonA) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_X: return nxGetControllerState(id, nxInput::ButtonY) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_Y: return nxGetControllerState(id, nxInput::ButtonX) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_UP: return nxGetControllerState(id, nxInput::ButtonUp) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT: return nxGetControllerState(id, nxInput::ButtonRight) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_DOWN: return nxGetControllerState(id, nxInput::ButtonDown) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT: return nxGetControllerState(id, nxInput::ButtonLeft) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_START: return nxGetControllerState(id, nxInput::ButtonPlus) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_BACK: return nxGetControllerState(id, nxInput::ButtonMinus) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSTICK: return nxGetControllerState(id, nxInput::LeftStickClick) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSTICK: return nxGetControllerState(id, nxInput::RightStickClick) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER: return nxGetControllerState(id, nxInput::ButtonL) == 1;
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: return nxGetControllerState(id, nxInput::ButtonR) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_A: return nxGetControllerState(id, nxInput::ButtonB) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_B: return nxGetControllerState(id, nxInput::ButtonA) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_X: return nxGetControllerState(id, nxInput::ButtonY) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_Y: return nxGetControllerState(id, nxInput::ButtonX) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_UP: return nxGetControllerState(id, nxInput::ButtonUp) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_RIGHT: return nxGetControllerState(id, nxInput::ButtonRight) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_DOWN: return nxGetControllerState(id, nxInput::ButtonDown) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_LEFT: return nxGetControllerState(id, nxInput::ButtonLeft) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_START: return nxGetControllerState(id, nxInput::ButtonPlus) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_BACK: return nxGetControllerState(id, nxInput::ButtonMinus) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_LEFT_STICK: return nxGetControllerState(id, nxInput::LeftStickClick) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_RIGHT_STICK: return nxGetControllerState(id, nxInput::RightStickClick) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_LEFT_SHOULDER: return nxGetControllerState(id, nxInput::ButtonL) == 1;
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER: return nxGetControllerState(id, nxInput::ButtonR) == 1;
 			default: return false;
 			}
 #else
-			SDL_GameController* pad = sdl_device;
-			return SDL_GameControllerGetButton(pad, binding.padButton) == 1;
+			SDL_Gamepad* pad = sdl_device;
+			return SDL_GetGamepadButton(pad, binding.padButton) == 1;
 #endif
 		}
 		else if ( binding.type == Binding_t::VIRTUAL_DPAD )
@@ -5721,13 +5721,13 @@ bool GameController::binaryOf(Binding_t& binding)
 #ifdef NINTENDO
 			if (binding.padAxisNegative) {
 				switch (binding.padAxis) {
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFTX:
 					return nxGetControllerState(id, nxInput::LeftStickX) < (INT16_MIN / 2);
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFTY:
 					return nxGetControllerState(id, nxInput::LeftStickY) < (INT16_MIN / 2);
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHTX:
 					return nxGetControllerState(id, nxInput::RightStickX) < (INT16_MIN / 2);
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHTY:
 					return nxGetControllerState(id, nxInput::RightStickY) < (INT16_MIN / 2);
 				default:
 					return false;
@@ -5735,31 +5735,31 @@ bool GameController::binaryOf(Binding_t& binding)
 			}
 			else {
 				switch (binding.padAxis) {
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFTX:
 					return nxGetControllerState(id, nxInput::LeftStickX) > (INT16_MAX / 2);
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFTY:
 					return nxGetControllerState(id, nxInput::LeftStickY) > (INT16_MAX / 2);
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHTX:
 					return nxGetControllerState(id, nxInput::RightStickX) > (INT16_MAX / 2);
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHTY:
 					return nxGetControllerState(id, nxInput::RightStickY) > (INT16_MAX / 2);
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERLEFT:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
 					return nxGetControllerState(id, nxInput::ButtonZL) == 1;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERRIGHT:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
 					return nxGetControllerState(id, nxInput::ButtonZR) == 1;
 				default:
 					return false;
 				}
 			}
 #else
-			SDL_GameController* pad = sdl_device;
+			SDL_Gamepad* pad = sdl_device;
 			if ( binding.padAxisNegative ) 
 			{
-				return SDL_GameControllerGetAxis(pad, binding.padAxis) < -16384;
+				return SDL_GetGamepadAxis(pad, binding.padAxis) < -16384;
 			}
 			else 
 			{
-				return SDL_GameControllerGetAxis(pad, binding.padAxis) > 16384;
+				return SDL_GetGamepadAxis(pad, binding.padAxis) > 16384;
 			}
 #endif
 		}
@@ -5776,25 +5776,25 @@ float GameController::analogOf(Binding_t& binding)
 		{
 #ifdef NINTENDO
 			switch (binding.padButton) {
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_A: return (float)nxGetControllerState(id, nxInput::ButtonB);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_B: return (float)nxGetControllerState(id, nxInput::ButtonA);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_X: return (float)nxGetControllerState(id, nxInput::ButtonY);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_Y: return (float)nxGetControllerState(id, nxInput::ButtonX);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_UP: return (float)nxGetControllerState(id, nxInput::ButtonUp);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT: return (float)nxGetControllerState(id, nxInput::ButtonRight);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_DOWN: return (float)nxGetControllerState(id, nxInput::ButtonDown);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT: return (float)nxGetControllerState(id, nxInput::ButtonLeft);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_START: return (float)nxGetControllerState(id, nxInput::ButtonPlus);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_BACK: return (float)nxGetControllerState(id, nxInput::ButtonMinus);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSTICK: return (float)nxGetControllerState(id, nxInput::LeftStickClick);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSTICK: return (float)nxGetControllerState(id, nxInput::RightStickClick);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER: return (float)nxGetControllerState(id, nxInput::ButtonL);
-			case SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: return (float)nxGetControllerState(id, nxInput::ButtonR);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_A: return (float)nxGetControllerState(id, nxInput::ButtonB);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_B: return (float)nxGetControllerState(id, nxInput::ButtonA);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_X: return (float)nxGetControllerState(id, nxInput::ButtonY);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_Y: return (float)nxGetControllerState(id, nxInput::ButtonX);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_UP: return (float)nxGetControllerState(id, nxInput::ButtonUp);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_RIGHT: return (float)nxGetControllerState(id, nxInput::ButtonRight);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_DOWN: return (float)nxGetControllerState(id, nxInput::ButtonDown);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_DPAD_LEFT: return (float)nxGetControllerState(id, nxInput::ButtonLeft);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_START: return (float)nxGetControllerState(id, nxInput::ButtonPlus);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_BACK: return (float)nxGetControllerState(id, nxInput::ButtonMinus);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_LEFT_STICK: return (float)nxGetControllerState(id, nxInput::LeftStickClick);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_RIGHT_STICK: return (float)nxGetControllerState(id, nxInput::RightStickClick);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_LEFT_SHOULDER: return (float)nxGetControllerState(id, nxInput::ButtonL);
+			case SDL_GamepadButton::SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER: return (float)nxGetControllerState(id, nxInput::ButtonR);
 			default: return 0.f;
 			}
 #else
-			SDL_GameController* pad = sdl_device;
-			return SDL_GameControllerGetButton(pad, binding.padButton) ? 1.f : 0.f;
+			SDL_Gamepad* pad = sdl_device;
+			return SDL_GetGamepadButton(pad, binding.padButton) ? 1.f : 0.f;
 #endif
 		}
 		else 
@@ -5803,43 +5803,43 @@ float GameController::analogOf(Binding_t& binding)
 			float result = 0.f;
 			if (binding.padAxisNegative) {
 				switch (binding.padAxis) {
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFTX:
 					result = std::max((float)nxGetControllerState(id, nxInput::LeftStickX) / INT16_MIN, 0.f); break;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFTY:
 					result = std::max((float)nxGetControllerState(id, nxInput::LeftStickY) / INT16_MIN, 0.f); break;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHTX:
 					result = std::max((float)nxGetControllerState(id, nxInput::RightStickX) / INT16_MIN, 0.f); break;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHTY:
 					result = std::max((float)nxGetControllerState(id, nxInput::RightStickY) / INT16_MIN, 0.f); break;
 				}
 			}
 			else {
 				switch (binding.padAxis) {
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFTX:
 					result = std::max((float)nxGetControllerState(id, nxInput::LeftStickX) / INT16_MAX, 0.f); break;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFTY:
 					result = std::max((float)nxGetControllerState(id, nxInput::LeftStickY) / INT16_MAX, 0.f); break;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHTX:
 					result = std::max((float)nxGetControllerState(id, nxInput::RightStickX) / INT16_MAX, 0.f); break;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHTY:
 					result = std::max((float)nxGetControllerState(id, nxInput::RightStickY) / INT16_MAX, 0.f); break;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERLEFT:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
 					result = nxGetControllerState(id, nxInput::ButtonZL); break;
-				case SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERRIGHT:
+				case SDL_GamepadAxis::SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
 					result = nxGetControllerState(id, nxInput::ButtonZR); break;
 				}
 			}
 			return (fabs(result) > binding.deadzone) ? result : 0.f;
 #else
-			SDL_GameController* pad = sdl_device;
+			SDL_Gamepad* pad = sdl_device;
 			if ( binding.padAxisNegative )
 			{
-				float result = std::min(SDL_GameControllerGetAxis(pad, binding.padAxis) / 32768.f, 0.f) * -1.f;
+				float result = std::min(SDL_GetGamepadAxis(pad, binding.padAxis) / 32768.f, 0.f) * -1.f;
 				return (fabs(result) > binding.deadzone) ? result : 0.f;
 			}
 			else 
 			{
-				float result = std::max(SDL_GameControllerGetAxis(pad, binding.padAxis) / 32767.f, 0.f);
+				float result = std::max(SDL_GetGamepadAxis(pad, binding.padAxis) / 32767.f, 0.f);
 				return (fabs(result) > binding.deadzone) ? result : 0.f;
 			}
 #endif
@@ -5964,54 +5964,54 @@ void GameController::updateAxis()
 	}
 }
 
-float GameController::analog(SDL_GameControllerButton binding) const
+float GameController::analog(SDL_GamepadButton binding) const
 {
-	if ( binding <= SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_INVALID || binding >= SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_MAX )
+	if ( binding <= SDL_GamepadButton::SDL_GAMEPAD_BUTTON_INVALID || binding >= SDL_GamepadButton::SDL_GAMEPAD_BUTTON_MAX )
 	{
 		return 0.f;
 	}
 	return buttons[binding].analog;
 }
 
-bool GameController::binaryToggle(SDL_GameControllerButton binding) const
+bool GameController::binaryToggle(SDL_GamepadButton binding) const
 {
-	if ( binding <= SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_INVALID || binding >= SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_MAX )
+	if ( binding <= SDL_GamepadButton::SDL_GAMEPAD_BUTTON_INVALID || binding >= SDL_GamepadButton::SDL_GAMEPAD_BUTTON_MAX )
 	{
 		return false;
 	}
 	return (buttons[binding].binary && !buttons[binding].consumed);
 }
 
-bool GameController::binaryReleaseToggle(SDL_GameControllerButton binding) const
+bool GameController::binaryReleaseToggle(SDL_GamepadButton binding) const
 {
-	if ( binding <= SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_INVALID || binding >= SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_MAX )
+	if ( binding <= SDL_GamepadButton::SDL_GAMEPAD_BUTTON_INVALID || binding >= SDL_GamepadButton::SDL_GAMEPAD_BUTTON_MAX )
 	{
 		return false;
 	}
 	return (buttons[binding].binaryRelease && !buttons[binding].binaryReleaseConsumed);
 }
 
-bool GameController::buttonHeldToggle(SDL_GameControllerButton binding) const
+bool GameController::buttonHeldToggle(SDL_GamepadButton binding) const
 {
-	if ( binding <= SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_INVALID || binding >= SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_MAX )
+	if ( binding <= SDL_GamepadButton::SDL_GAMEPAD_BUTTON_INVALID || binding >= SDL_GamepadButton::SDL_GAMEPAD_BUTTON_MAX )
 	{
 		return false;
 	}
 	return (buttons[binding].binary && !buttons[binding].consumed && (ticks - buttons[binding].buttonHeldTicks) > GameController::BUTTON_HELD_TICKS);
 }
 
-bool GameController::binary(SDL_GameControllerButton binding) const
+bool GameController::binary(SDL_GamepadButton binding) const
 {
-	if ( binding <= SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_INVALID || binding >= SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_MAX )
+	if ( binding <= SDL_GamepadButton::SDL_GAMEPAD_BUTTON_INVALID || binding >= SDL_GamepadButton::SDL_GAMEPAD_BUTTON_MAX )
 	{
 		return false;
 	}
 	return buttons[binding].binary;
 }
 
-void GameController::consumeBinaryReleaseToggle(SDL_GameControllerButton binding)
+void GameController::consumeBinaryReleaseToggle(SDL_GamepadButton binding)
 {
-	if ( binding <= SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_INVALID || binding >= SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_MAX )
+	if ( binding <= SDL_GamepadButton::SDL_GAMEPAD_BUTTON_INVALID || binding >= SDL_GamepadButton::SDL_GAMEPAD_BUTTON_MAX )
 	{
 		return;
 	}
@@ -6021,9 +6021,9 @@ void GameController::consumeBinaryReleaseToggle(SDL_GameControllerButton binding
 	}
 }
 
-void GameController::consumeBinaryToggle(SDL_GameControllerButton binding)
+void GameController::consumeBinaryToggle(SDL_GamepadButton binding)
 {
-	if ( binding <= SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_INVALID || binding >= SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_MAX )
+	if ( binding <= SDL_GamepadButton::SDL_GAMEPAD_BUTTON_INVALID || binding >= SDL_GamepadButton::SDL_GAMEPAD_BUTTON_MAX )
 	{
 		return;
 	}
@@ -6033,45 +6033,45 @@ void GameController::consumeBinaryToggle(SDL_GameControllerButton binding)
 	}
 }
 
-float GameController::analog(SDL_GameControllerAxis binding) const
+float GameController::analog(SDL_GamepadAxis binding) const
 {
-	if ( binding <= SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_INVALID || binding >= SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_MAX )
+	if ( binding <= SDL_GamepadAxis::SDL_GAMEPAD_AXIS_INVALID || binding >= SDL_GamepadAxis::SDL_GAMEPAD_AXIS_MAX )
 	{
 		return 0.f;
 	}
 	return axis[binding].analog;
 }
 
-bool GameController::binaryToggle(SDL_GameControllerAxis binding) const
+bool GameController::binaryToggle(SDL_GamepadAxis binding) const
 {
-	if ( binding <= SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_INVALID || binding >= SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_MAX )
+	if ( binding <= SDL_GamepadAxis::SDL_GAMEPAD_AXIS_INVALID || binding >= SDL_GamepadAxis::SDL_GAMEPAD_AXIS_MAX )
 	{
 		return false;
 	}
 	return (axis[binding].binary && !axis[binding].consumed);
 }
 
-bool GameController::binary(SDL_GameControllerAxis binding) const
+bool GameController::binary(SDL_GamepadAxis binding) const
 {
-	if ( binding <= SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_INVALID || binding >= SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_MAX )
+	if ( binding <= SDL_GamepadAxis::SDL_GAMEPAD_AXIS_INVALID || binding >= SDL_GamepadAxis::SDL_GAMEPAD_AXIS_MAX )
 	{
 		return false;
 	}
 	return axis[binding].binary;
 }
 
-bool GameController::buttonHeldToggle(SDL_GameControllerAxis binding) const
+bool GameController::buttonHeldToggle(SDL_GamepadAxis binding) const
 {
-	if ( binding <= SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_INVALID || binding >= SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_MAX )
+	if ( binding <= SDL_GamepadAxis::SDL_GAMEPAD_AXIS_INVALID || binding >= SDL_GamepadAxis::SDL_GAMEPAD_AXIS_MAX )
 	{
 		return false;
 	}
 	return (buttons[binding].binary && !buttons[binding].consumed && (ticks - buttons[binding].buttonHeldTicks) > GameController::BUTTON_HELD_TICKS);
 }
 
-void GameController::consumeBinaryToggle(SDL_GameControllerAxis binding)
+void GameController::consumeBinaryToggle(SDL_GamepadAxis binding)
 {
-	if ( binding <= SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_INVALID || binding >= SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_MAX )
+	if ( binding <= SDL_GamepadAxis::SDL_GAMEPAD_AXIS_INVALID || binding >= SDL_GamepadAxis::SDL_GAMEPAD_AXIS_MAX )
 	{
 		return;
 	}

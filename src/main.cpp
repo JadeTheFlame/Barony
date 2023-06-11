@@ -546,7 +546,7 @@ int minimapObjectZoom = 0;
 
 // audio definitions
 int audio_rate = 22050;
-Uint16 audio_format = AUDIO_S16;
+Uint16 audio_format = SDL_AUDIO_S16;
 int audio_channels = 2;
 int audio_buffers = 512;
 real_t sfxvolume = 1.0;

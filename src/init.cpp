@@ -186,7 +186,7 @@ int initApp(char const * const title, int fullscreen)
 #endif
     // do this in main() now.
 	/*Uint32 init_flags = SDL_INIT_VIDEO | SDL_INIT_EVENTS;
-	init_flags |= SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC;
+	init_flags |= SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD | SDL_INIT_HAPTIC;
 	if (SDL_Init(init_flags) == -1)
 	{
 		printlog("failed to initialize SDL: %s\n", SDL_GetError());
@@ -264,7 +264,7 @@ int initApp(char const * const title, int fullscreen)
 		}
 		switch (e->type) {
 		default: break;
-		case SDL_APP_TERMINATING:
+		case SDL_EVENT_TERMINATING:
 			// safe cleanup
 			printlog("barony safely shutting down");
 			saveConfig("default.cfg");
@@ -274,8 +274,8 @@ int initApp(char const * const title, int fullscreen)
 			deinitApp();
 			nxTerm();
 			break;
-		case SDL_APP_WILLENTERFOREGROUND:
-		case SDL_APP_DIDENTERFOREGROUND:
+		case SDL_EVENT_WILL_ENTER_FOREGROUND:
+		case SDL_EVENT_DID_ENTER_FOREGROUND:
 		{
 			printlog("barony waking up");
 			static const int displays = SDL_GetNumVideoDisplays();
@@ -290,7 +290,7 @@ int initApp(char const * const title, int fullscreen)
 				printlog("new display size: %d %d", x, y);
 				SDL_Event new_event;
 				new_event.type = SDL_WINDOWEVENT;
-				new_event.window.event = SDL_WINDOWEVENT_RESIZED;
+				new_event.window.event = SDL_EVENT_WINDOW_RESIZED;
 				new_event.window.data1 = x;
 				new_event.window.data2 = y;
 				new_event.window.timestamp = SDL_GetTicks();
@@ -303,14 +303,14 @@ int initApp(char const * const title, int fullscreen)
 #endif
 			break;
 		}
-		case SDL_APP_WILLENTERBACKGROUND:
-		case SDL_APP_DIDENTERBACKGROUND:
+		case SDL_EVENT_WILL_ENTER_BACKGROUND:
+		case SDL_EVENT_DID_ENTER_BACKGROUND:
 			printlog("barony going to sleep");
 #ifdef USE_EOS
 			EOS.SetSleepStatus(true);
 #endif
 			break;
-		case SDL_APP_LOWMEMORY:
+		case SDL_EVENT_LOW_MEMORY:
 			printlog("barony low memory, dumping UI cache");
 			Text::dumpCache();
 			Image::dumpCache();
@@ -324,9 +324,9 @@ int initApp(char const * const title, int fullscreen)
 #endif
 
 #ifdef NINTENDO
-	SDL_GameControllerAddMappingsFromFile(GAME_CONTROLLER_DB_FILEPATH);
+	SDL_AddGamepadMappingsFromFile(GAME_CONTROLLER_DB_FILEPATH);
 #else
-	SDL_GameControllerAddMappingsFromFile("gamecontrollerdb.txt");
+	SDL_AddGamepadMappingsFromFile("gamecontrollerdb.txt");
 #endif
 
 	//printlog("initializing SDL_mixer. rate: %d format: %d channels: %d buffers: %d\n", audio_rate, audio_format, audio_channels, audio_buffers);
@@ -356,7 +356,8 @@ int initApp(char const * const title, int fullscreen)
 	// hide cursor for game
 	if ( game )
 	{
-		SDL_ShowCursor(EnableMouseCapture == SDL_FALSE ? SDL_ENABLE : SDL_DISABLE);
+		SDL_ShowCursor();
+		//SDL_ShowCursor(EnableMouseCapture == SDL_FALSE ? SDL_ENABLE : SDL_DISABLE);
 	}
 	SDL_StopTextInput();
 
@@ -2192,13 +2193,13 @@ int deinitApp()
 	list_FreeAll(&button_l);
 	list_FreeAll(&entitiesdeleted);
 	if (font8x8_bmp) {
-		SDL_FreeSurface(font8x8_bmp);
+		SDL_DestroySurface(font8x8_bmp);
 	}
 	if (font12x12_bmp) {
-		SDL_FreeSurface(font12x12_bmp);
+		SDL_DestroySurface(font12x12_bmp);
 	}
 	if (font16x16_bmp) {
-		SDL_FreeSurface(font16x16_bmp);
+		SDL_DestroySurface(font16x16_bmp);
 	}
 	if (ttf8) {
 		TTF_CloseFont(ttf8);
@@ -2259,7 +2260,7 @@ int deinitApp()
 	if (tiles != nullptr) {
 		for (int c = 0; c < numtiles; ++c) {
 			if (tiles[c]) {
-				SDL_FreeSurface(tiles[c]);
+				SDL_DestroySurface(tiles[c]);
 			}
 		}
 		free(tiles);
@@ -2282,7 +2283,7 @@ int deinitApp()
 	if (sprites != nullptr) {
 		for (int c = 0; c < numsprites; ++c) {
 			if ( sprites[c] ) {
-				SDL_FreeSurface(sprites[c]);
+				SDL_DestroySurface(sprites[c]);
 			}
 		}
 		free(sprites);
@@ -2290,7 +2291,7 @@ int deinitApp()
 
 	// free achievement images
 	for (auto& item : achievementImages) {
-		SDL_FreeSurface(item.second);
+		SDL_DestroySurface(item.second);
 	}
 	achievementImages.clear();
 
@@ -2509,7 +2510,8 @@ static void positionAndLimitWindow(int& x, int& y, int& w, int& h)
 	// trying to switch the display size.
 	return;
 #else
-	static const int displays = SDL_GetNumVideoDisplays();
+	static int displays;
+	SDL_GetDisplays(&displays);
 	std::vector<SDL_Rect> displayBounds;
 	for (int i = 0; i < displays; i++) {
 		displayBounds.push_back(SDL_Rect());
@@ -2586,7 +2588,7 @@ bool initVideo()
 	    Uint32 flags = SDL_WINDOW_RESIZABLE;
 	    flags |= SDL_WINDOW_OPENGL;
 #ifndef EDITOR
-        flags |= SDL_WINDOW_ALLOW_HIGHDPI;
+        flags |= SDL_WINDOW_HIGH_PIXEL_DENSITY;
 #endif
 #ifdef PANDORA
 	    flags |= SDL_WINDOW_FULLSCREEN;
@@ -2608,7 +2610,7 @@ bool initVideo()
 
 		positionAndLimitWindow(screen_x, screen_y, screen_width, screen_height);
 
-		if ((screen = SDL_CreateWindow( window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_width, screen_height, flags )) == NULL)
+		if ((screen = SDL_CreateWindowWithPosition( window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_width, screen_height, flags )) == NULL)
 		{
 			printlog("failed to set video mode.\n");
 			return false;
@@ -2616,7 +2618,7 @@ bool initVideo()
 	}
 	else
 	{
-	    SDL_SetWindowFullscreen(screen, 0);
+	    SDL_SetWindowFullscreen(screen, SDL_bool::SDL_FALSE);
 
 		positionAndLimitWindow(screen_x, screen_y, screen_width, screen_height);
 
@@ -2624,17 +2626,17 @@ bool initVideo()
 		SDL_SetWindowBordered(screen, borderless ? SDL_bool::SDL_FALSE : SDL_bool::SDL_TRUE);
 		SDL_SetWindowPosition(screen, screen_x, screen_y);
 		SDL_SetWindowSize(screen, screen_width, screen_height);
-        SDL_GL_GetDrawableSize(screen, &xres, &yres);
+        SDL_GetWindowSizeInPixels(screen, &xres, &yres);
         printlog("set window size to %dx%d", xres, yres);
 
 #ifdef WINDOWS
 		if (fullscreen) {
 			SDL_DisplayMode mode;
-			SDL_GetDesktopDisplayMode(display_id, &mode);
+			mode = *SDL_GetDesktopDisplayMode(display_id);
 			mode.w = xres;
 			mode.h = yres;
-			SDL_SetWindowDisplayMode(screen, &mode);
-            SDL_SetWindowFullscreen(screen, SDL_WINDOW_FULLSCREEN);
+			SDL_SetWindowFullscreenMode(screen, &mode);
+            SDL_SetWindowFullscreen(screen, SDL_bool::SDL_TRUE);
 		}
 #endif
 	}
@@ -2658,12 +2660,12 @@ bool initVideo()
         
         // do this to fix the window size/position caused by high-dpi scaling
         int w1, w2, h1, h2;
-        SDL_GL_GetDrawableSize(screen, &w1, &h1);
+        SDL_GetWindowSizeInPixels(screen, &w1, &h1);
         SDL_GetWindowSize(screen, &w2, &h2);
         const float factorX = (float)w1 / w2;
         const float factorY = (float)h1 / h2;
         SDL_SetWindowSize(screen, screen_width / factorX, screen_height / factorY);
-        SDL_GL_GetDrawableSize(screen, &xres, &yres);
+        SDL_GetWindowSizeInPixels(screen, &xres, &yres);
         printlog("set window size to %dx%d", xres, yres);
         
         // setup opengl
@@ -2707,7 +2709,7 @@ bool changeVideoMode(int new_xres, int new_yres)
     float factorX, factorY;
     {
         int w1, w2, h1, h2;
-        SDL_GL_GetDrawableSize(screen, &w1, &h1);
+        SDL_GetWindowSizeInPixels(screen, &w1, &h1);
         SDL_GetWindowSize(screen, &w2, &h2);
         factorX = (float)w1 / w2;
         factorY = (float)h1 / h2;

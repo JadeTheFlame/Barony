@@ -3590,15 +3590,15 @@ static void bindControllerToPlayer(int id, int player) {
 	    input.refresh();
     }
     auto& input = Input::inputs[player];
-    if (event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
+    if (event.gbutton.button == SDL_GAMEPAD_BUTTON_A)
     {
         input.consumeBinary("MenuConfirm");
     }
-    if (event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
+    if (event.gbutton.button == SDL_GAMEPAD_BUTTON_B)
     {
         input.consumeBinary("MenuBack");
     }
-    if (event.cbutton.button == SDL_CONTROLLER_BUTTON_START)
+    if (event.gbutton.button == SDL_GAMEPAD_BUTTON_START)
     {
         input.consumeBinary("MenuStart");
     }
@@ -3759,10 +3759,10 @@ bool handleEvents(void)
 		// Global events
 		switch ( event.type )
 		{
-			case SDL_QUIT: // if SDL receives the shutdown signal
+			case SDL_EVENT_QUIT: // if SDL receives the shutdown signal
 				mainloop = 0;
 				break;
-			case SDL_KEYDOWN: // if a key is pressed...
+			case SDL_EVENT_KEY_DOWN: // if a key is pressed...
 			    if (demo_mode != DemoMode::STOPPED) {
 			        if (event.key.keysym.sym == SDLK_ESCAPE) {
 			            demo_stop();
@@ -3836,7 +3836,7 @@ bool handleEvents(void)
 						}
 					}
 				}
-				if ( SDL_IsTextInputActive() )
+				if ( SDL_TextInputActive() )
 				{
 					const size_t length = strlen(inputstr);
 
@@ -3878,12 +3878,12 @@ bool handleEvents(void)
 						cursorflash = ticks;
 					}
 #endif
-					else if ( event.key.keysym.sym == SDLK_c && SDL_GetModState()&KMOD_CTRL )
+					else if ( event.key.keysym.sym == SDLK_c && SDL_GetModState()&SDL_KMOD_CTRL )
 					{
 						SDL_SetClipboardText(inputstr);
 						cursorflash = ticks;
 					}
-					else if ( event.key.keysym.sym == SDLK_v && SDL_GetModState()&KMOD_CTRL )
+					else if ( event.key.keysym.sym == SDLK_v && SDL_GetModState()&SDL_KMOD_CTRL )
 					{
 					    size_t destlen = strlen(inputstr);
 					    size_t remaining = inputlen - destlen - 1;
@@ -3922,7 +3922,7 @@ bool handleEvents(void)
 					Input::lastInputOfAnyKind = SDL_GetKeyName(lastkeypressed);
 				}
 				break;
-			case SDL_KEYUP: // if a key is unpressed...
+			case SDL_EVENT_KEY_UP: // if a key is unpressed...
 			    if (demo_mode == DemoMode::PLAYING) {
 			        break;
 			    }
@@ -3953,17 +3953,17 @@ bool handleEvents(void)
 					Input::keys[key] = false;
 				}
 				break;
-			case SDL_TEXTINPUT:
-				if ( (event.text.text[0] != 'c' && event.text.text[0] != 'C') || !(SDL_GetModState()&KMOD_CTRL) )
+			case SDL_EVENT_TEXT_INPUT:
+				if ( (event.text.text[0] != 'c' && event.text.text[0] != 'C') || !(SDL_GetModState()&SDL_KMOD_CTRL) )
 				{
-					if ( (event.text.text[0] != 'v' && event.text.text[0] != 'V') || !(SDL_GetModState()&KMOD_CTRL) )
+					if ( (event.text.text[0] != 'v' && event.text.text[0] != 'V') || !(SDL_GetModState()&SDL_KMOD_CTRL) )
 					{
 						strncat(inputstr, event.text.text, std::max<size_t>(0, inputlen - strlen(inputstr)));
 						cursorflash = ticks;
 					}
 				}
 				break;
-			case SDL_FINGERDOWN: {
+			case SDL_EVENT_FINGER_DOWN: {
 				if (demo_mode == DemoMode::PLAYING) {
 					break;
 				}
@@ -3982,7 +3982,7 @@ bool handleEvents(void)
 				//mouseyrel += event.tfinger.dy * yres;
 				break;
 			}
-			case SDL_FINGERUP: {
+			case SDL_EVENT_FINGER_UP: {
 				if (demo_mode == DemoMode::PLAYING) {
 					break;
 				}
@@ -3997,7 +3997,7 @@ bool handleEvents(void)
 				//mouseyrel += event.tfinger.dy * yres;
 				break;
 			}
-			case SDL_FINGERMOTION: {
+			case SDL_EVENT_FINGER_MOTION: {
 				if (demo_mode == DemoMode::PLAYING) {
 					break;
 				}
@@ -4012,7 +4012,7 @@ bool handleEvents(void)
 				break;
 			}
 #ifndef NINTENDO
-			case SDL_MOUSEBUTTONDOWN: // if a mouse button is pressed...
+			case SDL_EVENT_MOUSE_BUTTON_DOWN: // if a mouse button is pressed...
 				if (demo_mode == DemoMode::PLAYING) {
 					break;
 				}
@@ -4041,7 +4041,7 @@ bool handleEvents(void)
                 lastkeypressed = 282 + event.button.button;
 #endif
 				break;
-			case SDL_MOUSEBUTTONUP: // if a mouse button is released...
+			case SDL_EVENT_MOUSE_BUTTON_UP: // if a mouse button is released...
 			    if (demo_mode == DemoMode::PLAYING) {
 			        break;
 			    }
@@ -4063,7 +4063,7 @@ bool handleEvents(void)
                 Input::mouseButtons[SDL_BUTTON_RIGHT] = 0;
 #endif
 				break;
-			case SDL_MOUSEWHEEL:
+			case SDL_EVENT_MOUSE_WHEEL:
 			    if (demo_mode == DemoMode::PLAYING) {
 			        break;
 			    }
@@ -4088,7 +4088,7 @@ bool handleEvents(void)
 					lastkeypressed = 287;
 				}
 				break;
-			case SDL_MOUSEMOTION: // if the mouse is moved...
+			case SDL_EVENT_MOUSE_MOTION: // if the mouse is moved...
 			    if (demo_mode == DemoMode::PLAYING) {
 			        break;
 			    }
@@ -4098,17 +4098,19 @@ bool handleEvents(void)
 					break;
 				}
 				menuselect = 0;
-                float factorX;
-                float factorY;
-                {
-                    int w1, w2, h1, h2;
-                    SDL_GL_GetDrawableSize(screen, &w1, &h1);
-                    SDL_GetWindowSize(screen, &w2, &h2);
-                    factorX = (float)w1 / w2;
-                    factorY = (float)h1 / h2;
-                }
-				mousex = event.motion.x * factorX;
-				mousey = event.motion.y * factorY;
+				{
+					float factorX;
+					float factorY;
+					{
+						int w1, w2, h1, h2;
+						SDL_GetWindowSizeInPixels(screen, &w1, &h1);
+						SDL_GetWindowSize(screen, &w2, &h2);
+						factorX = (float)w1 / w2;
+						factorY = (float)h1 / h2;
+					}
+					mousex = event.motion.x * factorX;
+					mousey = event.motion.y * factorY;
+				}
 				mousexrel += event.motion.xrel;
 				mouseyrel += event.motion.yrel;
 
@@ -4131,39 +4133,39 @@ bool handleEvents(void)
 					}
 				}
 				break;
-			case SDL_CONTROLLERBUTTONDOWN: // if joystick button is pressed
+			case SDL_EVENT_GAMEPAD_BUTTON_DOWN: // if joystick button is pressed
 			{
 			    if (demo_mode == DemoMode::PLAYING) {
 			        break;
 			    }
-				//joystatus[event.cbutton.button] = 1; // set this button's index to 1
-				lastkeypressed = 301 + event.cbutton.button;
+				//joystatus[event.gbutton.button] = 1; // set this button's index to 1
+				lastkeypressed = 301 + event.gbutton.button;
 				char buf[32] = "";
-				switch (event.cbutton.button) {
-				case SDL_CONTROLLER_BUTTON_A: snprintf(buf, sizeof(buf), "Pad%dButtonA", event.cbutton.which); break;
-				case SDL_CONTROLLER_BUTTON_B: snprintf(buf, sizeof(buf), "Pad%dButtonB", event.cbutton.which); break;
-				case SDL_CONTROLLER_BUTTON_X: snprintf(buf, sizeof(buf), "Pad%dButtonX", event.cbutton.which); break;
-				case SDL_CONTROLLER_BUTTON_Y: snprintf(buf, sizeof(buf), "Pad%dButtonY", event.cbutton.which); break;
-				case SDL_CONTROLLER_BUTTON_BACK: snprintf(buf, sizeof(buf), "Pad%dButtonBack", event.cbutton.which); break;
-				case SDL_CONTROLLER_BUTTON_START: snprintf(buf, sizeof(buf), "Pad%dButtonStart", event.cbutton.which); break;
-				case SDL_CONTROLLER_BUTTON_LEFTSTICK: snprintf(buf, sizeof(buf), "Pad%dButtonLeftStick", event.cbutton.which); break;
-				case SDL_CONTROLLER_BUTTON_RIGHTSTICK: snprintf(buf, sizeof(buf), "Pad%dButtonRightStick", event.cbutton.which); break;
-				case SDL_CONTROLLER_BUTTON_LEFTSHOULDER: snprintf(buf, sizeof(buf), "Pad%dButtonLeftBumper", event.cbutton.which); break;
-				case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: snprintf(buf, sizeof(buf), "Pad%dButtonRightBumper", event.cbutton.which); break;
-				case SDL_CONTROLLER_BUTTON_DPAD_LEFT: snprintf(buf, sizeof(buf), "Pad%dDpadX-", event.cbutton.which); break;
-				case SDL_CONTROLLER_BUTTON_DPAD_RIGHT: snprintf(buf, sizeof(buf), "Pad%dDpadX+", event.cbutton.which); break;
-				case SDL_CONTROLLER_BUTTON_DPAD_UP: snprintf(buf, sizeof(buf), "Pad%dDpadY-", event.cbutton.which); break;
-				case SDL_CONTROLLER_BUTTON_DPAD_DOWN: snprintf(buf, sizeof(buf), "Pad%dDpadY+", event.cbutton.which); break;
+				switch (event.gbutton.button) {
+				case SDL_GAMEPAD_BUTTON_A: snprintf(buf, sizeof(buf), "Pad%dButtonA", event.gbutton.which); break;
+				case SDL_GAMEPAD_BUTTON_B: snprintf(buf, sizeof(buf), "Pad%dButtonB", event.gbutton.which); break;
+				case SDL_GAMEPAD_BUTTON_X: snprintf(buf, sizeof(buf), "Pad%dButtonX", event.gbutton.which); break;
+				case SDL_GAMEPAD_BUTTON_Y: snprintf(buf, sizeof(buf), "Pad%dButtonY", event.gbutton.which); break;
+				case SDL_GAMEPAD_BUTTON_BACK: snprintf(buf, sizeof(buf), "Pad%dButtonBack", event.gbutton.which); break;
+				case SDL_GAMEPAD_BUTTON_START: snprintf(buf, sizeof(buf), "Pad%dButtonStart", event.gbutton.which); break;
+				case SDL_GAMEPAD_BUTTON_LEFT_STICK: snprintf(buf, sizeof(buf), "Pad%dButtonLeftStick", event.gbutton.which); break;
+				case SDL_GAMEPAD_BUTTON_RIGHT_STICK: snprintf(buf, sizeof(buf), "Pad%dButtonRightStick", event.gbutton.which); break;
+				case SDL_GAMEPAD_BUTTON_LEFT_SHOULDER: snprintf(buf, sizeof(buf), "Pad%dButtonLeftBumper", event.gbutton.which); break;
+				case SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER: snprintf(buf, sizeof(buf), "Pad%dButtonRightBumper", event.gbutton.which); break;
+				case SDL_GAMEPAD_BUTTON_DPAD_LEFT: snprintf(buf, sizeof(buf), "Pad%dDpadX-", event.gbutton.which); break;
+				case SDL_GAMEPAD_BUTTON_DPAD_RIGHT: snprintf(buf, sizeof(buf), "Pad%dDpadX+", event.gbutton.which); break;
+				case SDL_GAMEPAD_BUTTON_DPAD_UP: snprintf(buf, sizeof(buf), "Pad%dDpadY-", event.gbutton.which); break;
+				case SDL_GAMEPAD_BUTTON_DPAD_DOWN: snprintf(buf, sizeof(buf), "Pad%dDpadY+", event.gbutton.which); break;
 				}
 				Input::lastInputOfAnyKind = buf;
-			    if ( event.cbutton.button == SDL_CONTROLLER_BUTTON_A ||
-			         event.cbutton.button == SDL_CONTROLLER_BUTTON_B ||
-			         event.cbutton.button == SDL_CONTROLLER_BUTTON_START )
+			    if ( event.gbutton.button == SDL_GAMEPAD_BUTTON_A ||
+			         event.gbutton.button == SDL_GAMEPAD_BUTTON_B ||
+			         event.gbutton.button == SDL_GAMEPAD_BUTTON_START )
 			    {
-				    SDL_GameController* pad = SDL_GameControllerFromInstanceID(event.cbutton.which);
+				    SDL_Gamepad* pad = SDL_GetGamepadFromInstanceID(event.gbutton.which);
 				    if ( !pad )
 				    {
-					    printlog("(Unknown pad pressed input (instance: %d), null controller returned.)\n", event.cbutton.which);
+					    printlog("(Unknown pad pressed input (instance: %d), null controller returned.)\n", event.gbutton.which);
 				    }
 				    else
 				    {
@@ -4265,64 +4267,64 @@ bool handleEvents(void)
 				}
 				break;
 			}
-			case SDL_CONTROLLERAXISMOTION:
+			case SDL_EVENT_GAMEPAD_AXIS_MOTION:
 			{
 			    if (demo_mode == DemoMode::PLAYING) {
 			        break;
 			    }
 				char buf[32] = "";
 				float rebindingDeadzone = Input::getJoystickRebindingDeadzone() * 32768.f;
-				switch (event.caxis.axis) {
-				case SDL_CONTROLLER_AXIS_LEFTX: 
-					if ( event.caxis.value < -rebindingDeadzone )
+				switch (event.gaxis.axis) {
+				case SDL_GAMEPAD_AXIS_LEFTX: 
+					if ( event.gaxis.value < -rebindingDeadzone )
 					{
-						snprintf(buf, sizeof(buf), "Pad%dStickLeftX-", event.caxis.which);
+						snprintf(buf, sizeof(buf), "Pad%dStickLeftX-", event.gaxis.which);
 					}
-					else if ( event.caxis.value > rebindingDeadzone )
+					else if ( event.gaxis.value > rebindingDeadzone )
 					{
-						snprintf(buf, sizeof(buf), "Pad%dStickLeftX+", event.caxis.which);
-					}
-					break;
-				case SDL_CONTROLLER_AXIS_LEFTY: 
-					if ( event.caxis.value < -rebindingDeadzone )
-					{
-						snprintf(buf, sizeof(buf), "Pad%dStickLeftY-", event.caxis.which);
-					}
-					else if ( event.caxis.value > rebindingDeadzone )
-					{
-						snprintf(buf, sizeof(buf), "Pad%dStickLeftY+", event.caxis.which);
+						snprintf(buf, sizeof(buf), "Pad%dStickLeftX+", event.gaxis.which);
 					}
 					break;
-				case SDL_CONTROLLER_AXIS_RIGHTX: 
-					if ( event.caxis.value < -rebindingDeadzone )
+				case SDL_GAMEPAD_AXIS_LEFTY: 
+					if ( event.gaxis.value < -rebindingDeadzone )
 					{
-						snprintf(buf, sizeof(buf), "Pad%dStickRightX-", event.caxis.which);
+						snprintf(buf, sizeof(buf), "Pad%dStickLeftY-", event.gaxis.which);
 					}
-					else if ( event.caxis.value > rebindingDeadzone )
+					else if ( event.gaxis.value > rebindingDeadzone )
 					{
-						snprintf(buf, sizeof(buf), "Pad%dStickRightX+", event.caxis.which);
-					}
-					break;
-				case SDL_CONTROLLER_AXIS_RIGHTY:
-					if ( event.caxis.value < -rebindingDeadzone )
-					{
-						snprintf(buf, sizeof(buf), "Pad%dStickRightY-", event.caxis.which);
-					}
-					else if ( event.caxis.value > rebindingDeadzone )
-					{
-						snprintf(buf, sizeof(buf), "Pad%dStickRightY+", event.caxis.which);
+						snprintf(buf, sizeof(buf), "Pad%dStickLeftY+", event.gaxis.which);
 					}
 					break;
-				case SDL_CONTROLLER_AXIS_TRIGGERLEFT: 
-					if ( abs(event.caxis.value) > rebindingDeadzone )
+				case SDL_GAMEPAD_AXIS_RIGHTX: 
+					if ( event.gaxis.value < -rebindingDeadzone )
 					{
-						snprintf(buf, sizeof(buf), "Pad%dLeftTrigger", event.caxis.which); 
+						snprintf(buf, sizeof(buf), "Pad%dStickRightX-", event.gaxis.which);
+					}
+					else if ( event.gaxis.value > rebindingDeadzone )
+					{
+						snprintf(buf, sizeof(buf), "Pad%dStickRightX+", event.gaxis.which);
 					}
 					break;
-				case SDL_CONTROLLER_AXIS_TRIGGERRIGHT: 
-					if ( abs(event.caxis.value) > rebindingDeadzone )
+				case SDL_GAMEPAD_AXIS_RIGHTY:
+					if ( event.gaxis.value < -rebindingDeadzone )
 					{
-						snprintf(buf, sizeof(buf), "Pad%dRightTrigger", event.caxis.which); 
+						snprintf(buf, sizeof(buf), "Pad%dStickRightY-", event.gaxis.which);
+					}
+					else if ( event.gaxis.value > rebindingDeadzone )
+					{
+						snprintf(buf, sizeof(buf), "Pad%dStickRightY+", event.gaxis.which);
+					}
+					break;
+				case SDL_GAMEPAD_AXIS_LEFT_TRIGGER: 
+					if ( abs(event.gaxis.value) > rebindingDeadzone )
+					{
+						snprintf(buf, sizeof(buf), "Pad%dLeftTrigger", event.gaxis.which); 
+					}
+					break;
+				case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER: 
+					if ( abs(event.gaxis.value) > rebindingDeadzone )
+					{
+						snprintf(buf, sizeof(buf), "Pad%dRightTrigger", event.gaxis.which); 
 					}
 					break;
 				}
@@ -4332,27 +4334,27 @@ bool handleEvents(void)
 				}
 				break;
 			}
-			case SDL_CONTROLLERBUTTONUP:
+			case SDL_EVENT_GAMEPAD_BUTTON_UP:
 			{
 			    if (demo_mode == DemoMode::PLAYING) {
 			        break;
 			    }
 			    break;
 			}
-			case SDL_CONTROLLERDEVICEADDED:
+			case SDL_EVENT_GAMEPAD_ADDED:
 			{
 			    if (demo_mode == DemoMode::PLAYING) {
 			        break;
 			    }
-				const int sdl_device_index = event.cdevice.which; // this is an index within SDL_Numjoysticks(), not to be referred to from now on.
-				if ( !SDL_IsGameController(sdl_device_index) )
+				const int sdl_device_index = event.gdevice.which; // this is an index within SDL_Numjoysticks(), not to be referred to from now on.
+				if ( !SDL_IsGamepad(sdl_device_index) )
 				{
 					printlog("Info: device %d is not a game controller! Joysticks are not supported.\n", sdl_device_index);
 					break;
 				}
 
 				bool deviceAlreadyAdded = false;
-				SDL_GameController* newControllerAdded = SDL_GameControllerOpen(sdl_device_index);
+				SDL_Gamepad* newControllerAdded = SDL_OpenGamepad(sdl_device_index);
 				if ( newControllerAdded != nullptr )
 				{
 					for ( auto& controller : game_controllers )
@@ -4372,7 +4374,7 @@ bool handleEvents(void)
 
 				if ( newControllerAdded )
 				{
-					SDL_GameControllerClose(newControllerAdded); // we're going to re-open this below..
+					SDL_CloseGamepad(newControllerAdded); // we're going to re-open this below..
 					newControllerAdded = nullptr;
 				}
 
@@ -4408,14 +4410,14 @@ bool handleEvents(void)
 				}
 				break;
 			}
-			case SDL_CONTROLLERDEVICEREMOVED:
+			case SDL_EVENT_GAMEPAD_REMOVED:
 			{
 			    if (demo_mode == DemoMode::PLAYING) {
 			        break;
 			    }
 				// device removed uses a 'joystick id', different to the device added event
-				const int instanceID = event.cdevice.which;
-				SDL_GameController* pad = SDL_GameControllerFromInstanceID(instanceID);
+				const int instanceID = event.gdevice.which;
+				SDL_Gamepad* pad = SDL_GetGamepadFromInstanceID(instanceID);
 				if ( !pad )
 				{
 					printlog("(Unknown device removed as game controller, null controller returned.)\n");
@@ -4443,32 +4445,32 @@ bool handleEvents(void)
 				}
 				break;
 			}
-			case SDL_JOYDEVICEADDED:
+			case SDL_EVENT_JOYSTICK_ADDED:
 			{
 			    if (demo_mode == DemoMode::PLAYING) {
 			        break;
 			    }
-				if ( SDL_IsGameController(event.jdevice.which) )
+				if ( SDL_IsGamepad(event.jdevice.which) )
 				{
-					// this is supported by the SDL_GameController interface, no need to make a joystick for it
+					// this is supported by the SDL_Gamepad interface, no need to make a joystick for it
 					break;
 				}
-				SDL_Joystick* joystick = SDL_JoystickOpen(event.jdevice.which);
+				SDL_Joystick* joystick = SDL_OpenJoystick(event.jdevice.which);
 				if (!joystick) {
 					printlog("A joystick was plugged in, but no handle is available!");
 				} else {
 					Input::joysticks[event.jdevice.which] = joystick;
-					printlog("Added joystick '%s' with device index (%d)", SDL_JoystickName(joystick), event.jdevice.which);
-					printlog(" NumAxes: %d", SDL_JoystickNumAxes(joystick));
-					printlog(" NumButtons: %d", SDL_JoystickNumButtons(joystick));
-					printlog(" NumHats: %d", SDL_JoystickNumHats(joystick));
+					printlog("Added joystick '%s' with device index (%d)", SDL_GetJoystickName(joystick), event.jdevice.which);
+					printlog(" NumAxes: %d", SDL_GetNumJoystickAxes(joystick));
+					printlog(" NumButtons: %d", SDL_GetNumJoystickButtons(joystick));
+					printlog(" NumHats: %d", SDL_GetNumJoystickHats(joystick));
 					for (int c = 0; c < 4; ++c) {
 						Input::inputs[c].refresh();
 					}
 				}
 				break;
 			}
-			case SDL_JOYBUTTONDOWN:
+			case SDL_EVENT_JOYSTICK_BUTTON_DOWN:
 			{
 			    if (demo_mode == DemoMode::PLAYING) {
 			        break;
@@ -4481,7 +4483,7 @@ bool handleEvents(void)
 				}
 				break;
 			}
-			case SDL_JOYAXISMOTION:
+			case SDL_EVENT_JOYSTICK_AXIS_MOTION:
 			{
 			    if (demo_mode == DemoMode::PLAYING) {
 			        break;
@@ -4505,7 +4507,7 @@ bool handleEvents(void)
 				}
 				break;
 			}
-			case SDL_JOYHATMOTION:
+			case SDL_EVENT_JOYSTICK_HAT_MOTION:
 			{
 			    if (demo_mode == DemoMode::PLAYING) {
 			        break;
@@ -4528,17 +4530,17 @@ bool handleEvents(void)
 				}
 				break;
 			}
-			case SDL_JOYDEVICEREMOVED:
+			case SDL_EVENT_JOYSTICK_REMOVED:
 			{
 			    if (demo_mode == DemoMode::PLAYING) {
 			        break;
 			    }
-				if ( SDL_IsGameController(event.jdevice.which) )
+				if ( SDL_IsGamepad(event.jdevice.which) )
 				{
-					// this is supported by the SDL_GameController interface, no need to make a joystick for it
+					// this is supported by the SDL_Gamepad interface, no need to make a joystick for it
 					break;
 				}
-				SDL_Joystick* joystick = SDL_JoystickFromInstanceID(event.jdevice.which);
+				SDL_Joystick* joystick = SDL_GetJoystickFromInstanceID(event.jdevice.which);
 				if (joystick == nullptr) {
 					printlog("A joystick was removed, but I don't know which one!");
 				} else {
@@ -4546,7 +4548,7 @@ bool handleEvents(void)
 					for (auto& pair : Input::joysticks) {
 						SDL_Joystick* curr = pair.second;
 						if (joystick == curr) {
-							SDL_JoystickClose(curr);
+							SDL_CloseJoystick(curr);
 							index = pair.first;
 							printlog("Removed joystick with device index (%d), instance id (%d)", index, event.jdevice.which);
 							Input::joysticks.erase(index);
@@ -4563,50 +4565,47 @@ bool handleEvents(void)
 				break;
 			}
 #endif
-			case SDL_WINDOWEVENT:
-				if ( event.window.event == SDL_WINDOWEVENT_FOCUS_LOST && mute_audio_on_focus_lost )
-				{
+			case SDL_EVENT_WINDOW_FOCUS_LOST:
 				    setGlobalVolume(0.f, 0.f, 0.f, 0.f, 0.f, 0.f);
-				}
-				else if ( event.window.event == SDL_WINDOWEVENT_FOCUS_GAINED )
-				{
+					break;
+			case SDL_EVENT_WINDOW_FOCUS_GAINED:
 				    setGlobalVolume(MainMenu::master_volume,
 				        musvolume,
 				        sfxvolume,
 				        sfxAmbientVolume,
 				        sfxEnvironmentVolume,
 						sfxNotificationVolume);
-				}
-				else if (event.window.event == SDL_WINDOWEVENT_RESIZED)
-				{
+					break;
+			case SDL_EVENT_WINDOW_RESIZED:
 #if defined(NINTENDO)
-					if (!changeVideoMode(event.window.data1, event.window.data2))
-					{
-						printlog("critical error! Attempting to abort safely...\n");
-						mainloop = 0;
-					}
-					if (!intro) {
-						MainMenu::setupSplitscreen();
-					}
+				if (!changeVideoMode(event.window.data1, event.window.data2))
+				{
+					printlog("critical error! Attempting to abort safely...\n");
+					mainloop = 0;
+				}
+				if (!intro) {
+					MainMenu::setupSplitscreen();
+				}
 #else
-                    float factorX, factorY;
-                    {
-                        int w1, w2, h1, h2;
-                        SDL_GL_GetDrawableSize(screen, &w1, &h1);
-                        SDL_GetWindowSize(screen, &w2, &h2);
-                        factorX = (float)w1 / w2;
-                        factorY = (float)h1 / h2;
-                    }
-                    const int x = event.window.data1 * factorX;
-                    const int y = event.window.data2 * factorY;
+				{
+					float factorX, factorY;
+					{
+						int w1, w2, h1, h2;
+						SDL_GetWindowSizeInPixels(screen, &w1, &h1);
+						SDL_GetWindowSize(screen, &w2, &h2);
+						factorX = (float)w1 / w2;
+						factorY = (float)h1 / h2;
+					}
+					const int x = event.window.data1 * factorX;
+					const int y = event.window.data2 * factorY;
 					if (!resizeWindow(x, y))
 					{
 						printlog("critical error! Attempting to abort safely...\n");
 						mainloop = 0;
 					}
-#endif
 				}
-				break;
+#endif
+			break;
 		}
 	}
 
@@ -4754,7 +4753,7 @@ void pauseGame(int mode /* 0 == toggle, 1 == force unpause, 2 == force pause */,
 		{
             // fix for macOS: put mouse back in window before recapturing mouse
             if (EnableMouseCapture) {
-                int mouse_x, mouse_y;
+                float mouse_x, mouse_y;
                 SDL_GetGlobalMouseState(&mouse_x, &mouse_y);
                 int x, y, w, h;
                 SDL_GetWindowPosition(screen, &x, &y);
@@ -5282,7 +5281,7 @@ void ingameHud()
 				{
                     // fix for macOS: put mouse back in window before recapturing mouse
                     if (EnableMouseCapture) {
-                        int mouse_x, mouse_y;
+                        float mouse_x, mouse_y;
                         SDL_GetGlobalMouseState(&mouse_x, &mouse_y);
                         int x, y, w, h;
                         SDL_GetWindowPosition(screen, &x, &y);
@@ -6017,7 +6016,7 @@ static void doConsoleCommands() {
 		inputlen = 127;
 		command = true;
 		cursorflash = ticks;
-		if (!SDL_IsTextInputActive()) {
+		if (!SDL_TextInputActive()) {
 			SDL_StartTextInput();
 		}
 
@@ -6041,7 +6040,7 @@ static void doConsoleCommands() {
 		// check for forced cancel
 		if (!controlEnabled)
 		{
-			if (SDL_IsTextInputActive()) {
+			if (SDL_TextInputActive()) {
 				SDL_StopTextInput();
 			}
 			inputstr = nullptr;
@@ -6062,7 +6061,7 @@ static void doConsoleCommands() {
 		}
 
 		// set inputstr
-		if (!SDL_IsTextInputActive()) {
+		if (!SDL_TextInputActive()) {
 			SDL_StartTextInput();
 		}
 		inputstr = command_str;
@@ -6072,7 +6071,7 @@ static void doConsoleCommands() {
 		if (confirm)
 		{
 			// no longer accepting input
-			if (SDL_IsTextInputActive()) {
+			if (SDL_TextInputActive()) {
 				SDL_StopTextInput();
 			}
 			inputstr = nullptr;
@@ -6178,7 +6177,7 @@ static void doConsoleCommands() {
 		if (inputstr == command_str) {
 			inputstr = nullptr;
 		}
-		if (!inputstr && SDL_IsTextInputActive()) {
+		if (!inputstr && SDL_TextInputActive()) {
 			SDL_StopTextInput();
 		}
 	}
@@ -6395,7 +6394,7 @@ int main(int argc, char** argv)
         
         // init sdl
         Uint32 init_flags = SDL_INIT_VIDEO | SDL_INIT_EVENTS;
-        init_flags |= SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC;
+        init_flags |= SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD | SDL_INIT_HAPTIC;
         if (SDL_Init(init_flags) == -1)
         {
             printlog("failed to initialize SDL: %s\n", SDL_GetError());

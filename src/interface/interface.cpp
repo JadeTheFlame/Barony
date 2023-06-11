@@ -386,274 +386,274 @@ void freeInterfaceResources()
 
 	if (font12x12_small_bmp)
 	{
-		SDL_FreeSurface(font12x12_small_bmp);
+		SDL_DestroySurface(font12x12_small_bmp);
 	}
 	if ( backdrop_blessed_bmp )
 	{
-		SDL_FreeSurface(backdrop_blessed_bmp);
+		SDL_DestroySurface(backdrop_blessed_bmp);
 	}
 	if ( backdrop_cursed_bmp )
 	{
-		SDL_FreeSurface(backdrop_cursed_bmp);
+		SDL_DestroySurface(backdrop_cursed_bmp);
 	}
 	if (status_bmp)
 	{
-		SDL_FreeSurface(status_bmp);
+		SDL_DestroySurface(status_bmp);
 	}
 	if (character_bmp)
 	{
-		SDL_FreeSurface(character_bmp);
+		SDL_DestroySurface(character_bmp);
 	}
 	if (hunger_bmp)
 	{
-		SDL_FreeSurface(hunger_bmp);
+		SDL_DestroySurface(hunger_bmp);
 	}
 	if ( hunger_blood_bmp )
 	{
-		SDL_FreeSurface(hunger_blood_bmp);
+		SDL_DestroySurface(hunger_blood_bmp);
 	}
 	if ( hunger_boiler_bmp )
 	{
-		SDL_FreeSurface(hunger_boiler_bmp);
+		SDL_DestroySurface(hunger_boiler_bmp);
 	}
 	if ( hunger_boiler_hotflame_bmp )
 	{
-		SDL_FreeSurface(hunger_boiler_hotflame_bmp);
+		SDL_DestroySurface(hunger_boiler_hotflame_bmp);
 	}
 	if ( hunger_boiler_flame_bmp )
 	{
-		SDL_FreeSurface(hunger_boiler_flame_bmp);
+		SDL_DestroySurface(hunger_boiler_flame_bmp);
 	}
 	if ( minotaur_bmp )
 	{
-		SDL_FreeSurface(minotaur_bmp);
+		SDL_DestroySurface(minotaur_bmp);
 	}
 	//if(textup_bmp)
-	//SDL_FreeSurface(textup_bmp);
+	//SDL_DestroySurface(textup_bmp);
 	//if(textdown_bmp)
-	//SDL_FreeSurface(textdown_bmp);
+	//SDL_DestroySurface(textdown_bmp);
 	if (attributesleft_bmp)
 	{
-		SDL_FreeSurface(attributesleft_bmp);
+		SDL_DestroySurface(attributesleft_bmp);
 	}
 	if (attributesright_bmp)
 	{
-		SDL_FreeSurface(attributesright_bmp);
+		SDL_DestroySurface(attributesright_bmp);
 	}
 	if (attributesleftunclicked_bmp)
 	{
-		SDL_FreeSurface(attributesleftunclicked_bmp);
+		SDL_DestroySurface(attributesleftunclicked_bmp);
 	}
 	if (attributesrightunclicked_bmp)
 	{
-		SDL_FreeSurface(attributesrightunclicked_bmp);
+		SDL_DestroySurface(attributesrightunclicked_bmp);
 	}
 	if (magicspellList_bmp)
 	{
-		SDL_FreeSurface(magicspellList_bmp);
+		SDL_DestroySurface(magicspellList_bmp);
 	}
 	if (spell_list_titlebar_bmp)
 	{
-		SDL_FreeSurface(spell_list_titlebar_bmp);
+		SDL_DestroySurface(spell_list_titlebar_bmp);
 	}
 	if (spell_list_gui_slot_bmp)
 	{
-		SDL_FreeSurface(spell_list_gui_slot_bmp);
+		SDL_DestroySurface(spell_list_gui_slot_bmp);
 	}
 	if (spell_list_gui_slot_highlighted_bmp)
 	{
-		SDL_FreeSurface(spell_list_gui_slot_highlighted_bmp);
+		SDL_DestroySurface(spell_list_gui_slot_highlighted_bmp);
 	}
 	if (sustained_spell_generic_icon)
 	{
-		SDL_FreeSurface(sustained_spell_generic_icon);
+		SDL_DestroySurface(sustained_spell_generic_icon);
 	}
 	if (invup_bmp != NULL)
 	{
-		SDL_FreeSurface(invup_bmp);
+		SDL_DestroySurface(invup_bmp);
 	}
 	if (invdown_bmp != NULL)
 	{
-		SDL_FreeSurface(invdown_bmp);
+		SDL_DestroySurface(invdown_bmp);
 	}
 	if (inventory_bmp != NULL)
 	{
-		SDL_FreeSurface(inventory_bmp);
+		SDL_DestroySurface(inventory_bmp);
 	}
 	if (inventoryoption_bmp != NULL)
 	{
-		SDL_FreeSurface(inventoryoption_bmp);
+		SDL_DestroySurface(inventoryoption_bmp);
 	}
 	if (inventory_mode_item_img)
 	{
-		SDL_FreeSurface(inventory_mode_item_img);
+		SDL_DestroySurface(inventory_mode_item_img);
 	}
 	if (inventory_mode_item_highlighted_img)
 	{
-		SDL_FreeSurface(inventory_mode_item_highlighted_img);
+		SDL_DestroySurface(inventory_mode_item_highlighted_img);
 	}
 	if (inventory_mode_spell_img)
 	{
-		SDL_FreeSurface(inventory_mode_spell_img);
+		SDL_DestroySurface(inventory_mode_spell_img);
 	}
 	if (inventory_mode_spell_highlighted_img)
 	{
-		SDL_FreeSurface(inventory_mode_spell_highlighted_img);
+		SDL_DestroySurface(inventory_mode_spell_highlighted_img);
 	}
 	if (button_bmp != NULL)
 	{
-		SDL_FreeSurface(button_bmp);
+		SDL_DestroySurface(button_bmp);
 	}
 	if (smallbutton_bmp != NULL)
 	{
-		SDL_FreeSurface(smallbutton_bmp);
+		SDL_DestroySurface(smallbutton_bmp);
 	}
 	if (equipped_bmp != NULL)
 	{
-		SDL_FreeSurface(equipped_bmp);
+		SDL_DestroySurface(equipped_bmp);
 	}
 	if ( itembroken_bmp != nullptr )
 	{
-		SDL_FreeSurface(itembroken_bmp);
+		SDL_DestroySurface(itembroken_bmp);
 	}
 	if (inventoryChest_bmp != NULL)
 	{
-		SDL_FreeSurface(inventoryChest_bmp);
+		SDL_DestroySurface(inventoryChest_bmp);
 	}
 	if (invclose_bmp != NULL)
 	{
-		SDL_FreeSurface(invclose_bmp);
+		SDL_DestroySurface(invclose_bmp);
 	}
 	if (invgraball_bmp != NULL)
 	{
-		SDL_FreeSurface(invgraball_bmp);
+		SDL_DestroySurface(invgraball_bmp);
 	}
 	if (inventoryoptionChest_bmp != NULL)
 	{
-		SDL_FreeSurface(inventoryoptionChest_bmp);
+		SDL_DestroySurface(inventoryoptionChest_bmp);
 	}
 	if (shopkeeper_bmp != NULL)
 	{
-		SDL_FreeSurface(shopkeeper_bmp);
+		SDL_DestroySurface(shopkeeper_bmp);
 	}
 	if ( shopkeeper2_bmp != NULL )
 	{
-		SDL_FreeSurface(shopkeeper2_bmp);
+		SDL_DestroySurface(shopkeeper2_bmp);
 	}
 	if (damage_bmp != NULL)
 	{
-		SDL_FreeSurface(damage_bmp);
+		SDL_DestroySurface(damage_bmp);
 	}
 	//for( c=0; c<NUMCATEGORIES; c++ )
 	//if(category_bmp[c]!=NULL)
-	//SDL_FreeSurface(category_bmp[c]);
+	//SDL_DestroySurface(category_bmp[c]);
 	if (identifyGUI_img != NULL)
 	{
-		SDL_FreeSurface(identifyGUI_img);
+		SDL_DestroySurface(identifyGUI_img);
 	}
 	/*if (rightsidebar_titlebar_img)
-		SDL_FreeSurface(rightsidebar_titlebar_img);
+		SDL_DestroySurface(rightsidebar_titlebar_img);
 	if (rightsidebar_slot_img)
-		SDL_FreeSurface(rightsidebar_slot_img);
+		SDL_DestroySurface(rightsidebar_slot_img);
 	if (rightsidebar_slot_highlighted_img)
-		SDL_FreeSurface(rightsidebar_slot_highlighted_img);*/
+		SDL_DestroySurface(rightsidebar_slot_highlighted_img);*/
 	if (rightsidebar_slot_grayedout_img)
 	{
-		SDL_FreeSurface(rightsidebar_slot_grayedout_img);
+		SDL_DestroySurface(rightsidebar_slot_grayedout_img);
 	}
 	if (bookgui_img)
 	{
-		SDL_FreeSurface(bookgui_img);
+		SDL_DestroySurface(bookgui_img);
 	}
 	//if (nextpage_img)
-	//SDL_FreeSurface(nextpage_img);
+	//SDL_DestroySurface(nextpage_img);
 	//if (previouspage_img)
-	//SDL_FreeSurface(previouspage_img);
+	//SDL_DestroySurface(previouspage_img);
 	//if (bookclose_img)
-	//SDL_FreeSurface(bookclose_img);
+	//SDL_DestroySurface(bookclose_img);
 	if (book_highlighted_left_img)
 	{
-		SDL_FreeSurface(book_highlighted_left_img);
+		SDL_DestroySurface(book_highlighted_left_img);
 	}
 	if (book_highlighted_right_img)
 	{
-		SDL_FreeSurface(book_highlighted_right_img);
+		SDL_DestroySurface(book_highlighted_right_img);
 	}
 	if (hotbar_img)
 	{
-		SDL_FreeSurface(hotbar_img);
+		SDL_DestroySurface(hotbar_img);
 	}
 	if (hotbar_spell_img)
 	{
-		SDL_FreeSurface(hotbar_spell_img);
+		SDL_DestroySurface(hotbar_spell_img);
 	}
 	if ( str_bmp64u )
 	{
-		SDL_FreeSurface(str_bmp64u);
+		SDL_DestroySurface(str_bmp64u);
 	}
 	if ( dex_bmp64u )
 	{
-		SDL_FreeSurface(dex_bmp64u);
+		SDL_DestroySurface(dex_bmp64u);
 	}
 	if ( con_bmp64u )
 	{
-		SDL_FreeSurface(con_bmp64u);
+		SDL_DestroySurface(con_bmp64u);
 	}
 	if ( int_bmp64u )
 	{
-		SDL_FreeSurface(int_bmp64u);
+		SDL_DestroySurface(int_bmp64u);
 	}
 	if ( per_bmp64u )
 	{
-		SDL_FreeSurface(per_bmp64u);
+		SDL_DestroySurface(per_bmp64u);
 	}
 	if ( chr_bmp64u )
 	{
-		SDL_FreeSurface(chr_bmp64u);
+		SDL_DestroySurface(chr_bmp64u);
 	}
 	if ( str_bmp64 )
 	{
-		SDL_FreeSurface(str_bmp64);
+		SDL_DestroySurface(str_bmp64);
 	}
 	if ( dex_bmp64 )
 	{
-		SDL_FreeSurface(dex_bmp64);
+		SDL_DestroySurface(dex_bmp64);
 	}
 	if ( con_bmp64 )
 	{
-		SDL_FreeSurface(con_bmp64);
+		SDL_DestroySurface(con_bmp64);
 	}
 	if ( int_bmp64 )
 	{
-		SDL_FreeSurface(int_bmp64);
+		SDL_DestroySurface(int_bmp64);
 	}
 	if ( per_bmp64 )
 	{
-		SDL_FreeSurface(per_bmp64);
+		SDL_DestroySurface(per_bmp64);
 	}
 	if ( chr_bmp64 )
 	{
-		SDL_FreeSurface(chr_bmp64);
+		SDL_DestroySurface(chr_bmp64);
 	}
 	if ( sidebar_lock_bmp )
 	{
-		SDL_FreeSurface(sidebar_lock_bmp);
+		SDL_DestroySurface(sidebar_lock_bmp);
 	}
 	if ( sidebar_unlock_bmp )
 	{
-		SDL_FreeSurface(sidebar_unlock_bmp);
+		SDL_DestroySurface(sidebar_unlock_bmp);
 	}
 	if ( effect_drunk_bmp )
 	{
-		SDL_FreeSurface(effect_drunk_bmp);
+		SDL_DestroySurface(effect_drunk_bmp);
 	}
 	if ( effect_polymorph_bmp )
 	{
-		SDL_FreeSurface(effect_polymorph_bmp);
+		SDL_DestroySurface(effect_polymorph_bmp);
 	}
 	if ( effect_hungover_bmp )
 	{
-		SDL_FreeSurface(effect_hungover_bmp);
+		SDL_DestroySurface(effect_hungover_bmp);
 	}
 	for ( int i = 0; i < MAXPLAYERS; ++i )
 	{
@@ -962,7 +962,7 @@ const char* getInputName(Uint32 scancode)
 	}
 	else if ( scancode < 317 )     //Game controller buttons.
 	{
-		return SDL_GameControllerGetStringForButton(static_cast<SDL_GameControllerButton>(scancode - 301));
+		return SDL_GetGamepadStringForButton(static_cast<SDL_GamepadButton>(scancode - 301));
 	}
 	else
 	{

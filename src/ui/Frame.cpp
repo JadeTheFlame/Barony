@@ -251,7 +251,7 @@ Frame::~Frame() {
 	}
 	if ( blitSurface )
 	{
-		SDL_FreeSurface(blitSurface);
+		SDL_DestroySurface(blitSurface);
 		blitSurface = nullptr;
 	}
 	clear();
@@ -671,7 +671,7 @@ void Frame::draw(SDL_Rect _size, SDL_Rect _actualSize, const std::vector<const W
 				}
 				if ( f->blitSurface )
 				{
-					SDL_FreeSurface(f->blitSurface);
+					SDL_DestroySurface(f->blitSurface);
 					f->blitSurface = nullptr;
 				}
 				f->blitSurface = SDL_CreateRGBSurface(0, size.w, size.h, 32,
@@ -2632,7 +2632,7 @@ void Frame::setBlitChildren(bool _doBlit)
 		}
 		if ( blitSurface )
 		{
-			SDL_FreeSurface(blitSurface);
+			SDL_DestroySurface(blitSurface);
 			blitSurface = nullptr;
 		}
 
@@ -2683,7 +2683,7 @@ void Frame::setBlitChildren(bool _doBlit)
 		}
 		if ( blitSurface )
 		{
-			SDL_FreeSurface(blitSurface);
+			SDL_DestroySurface(blitSurface);
 			blitSurface = nullptr;
 		}
 

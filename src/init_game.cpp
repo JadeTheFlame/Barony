@@ -610,23 +610,23 @@ void deinitGame()
 	list_FreeAll(&removedEntities);
 	if ( title_bmp != nullptr )
 	{
-		SDL_FreeSurface(title_bmp);
+		SDL_DestroySurface(title_bmp);
 	}
 	if ( logo_bmp != nullptr )
 	{
-		SDL_FreeSurface(logo_bmp);
+		SDL_DestroySurface(logo_bmp);
 	}
 	if ( cursor_bmp != nullptr )
 	{
-		SDL_FreeSurface(cursor_bmp);
+		SDL_DestroySurface(cursor_bmp);
 	}
 	if ( cross_bmp != nullptr )
 	{
-		SDL_FreeSurface(cross_bmp);
+		SDL_DestroySurface(cross_bmp);
 	}
 	if ( selected_cursor_bmp != nullptr )
 	{
-		SDL_FreeSurface(selected_cursor_bmp);
+		SDL_DestroySurface(selected_cursor_bmp);
 	}
 	for ( int i = 0; i < MAXPLAYERS; ++i )
 	{
@@ -816,7 +816,7 @@ void deinitGame()
 			if ( surface )
 				if ( *surface )
 				{
-					SDL_FreeSurface(*surface);
+					SDL_DestroySurface(*surface);
 				}
 		}
 		list_FreeAll(&items[c].surfaces);
@@ -877,7 +877,7 @@ void deinitGame()
 	//Close game controller
 	/*if (game_controller)
 	{
-		SDL_GameControllerClose(game_controller);
+		SDL_CloseGamepad(game_controller);
 		game_controller = nullptr;
 	}*/
 	/*if (game_controller)

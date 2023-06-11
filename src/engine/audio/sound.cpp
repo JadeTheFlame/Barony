@@ -212,7 +212,7 @@ struct OPENAL_CHANNELGROUP {
 	OPENAL_SOUND **sounds;
 };
 
-SDL_mutex *openal_mutex;
+SDL_Mutex *openal_mutex;
 
 static size_t openal_oggread(void* ptr, size_t size, size_t nmemb, void* datasource) {
 	OPENAL_SOUND* self = (OPENAL_SOUND*)datasource;
